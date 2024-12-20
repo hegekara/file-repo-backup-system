@@ -37,48 +37,48 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseEntity<User> createUser(User user) {
-        logger.info("Kullanıcı oluşturma işlemi başladı.");
+        logger.info("User creation process started.");
         try {
             String encryptedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassword);
 
             User savedUser = userRepository.save(user);
-            logger.info("Kullanıcı başarıyla oluşturuldu: {}", savedUser.getId());
+            logger.info("User successfully created: {}", savedUser.getId());
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
-            logger.error("Kullanıcı oluşturulurken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while creating user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<String> login(LoginRequest loginRequest) {
-        logger.info("Giriş işlemi başladı: {}", loginRequest.getUsername());
+        logger.info("Login process started: {}", loginRequest.getUsername());
 
         try {
             User user = userRepository.findByUsername(loginRequest.getUsername());
             if (user != null) {
                 if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                     String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-                    logger.info("Giriş başarılı: {}", user.getUsername());
+                    logger.info("Login successful: {}", user.getUsername());
                     return ResponseEntity.ok(token);
                 }
 
-                logger.warn("Hatalı şifre ile giriş denemesi: {}", loginRequest.getUsername());
+                logger.warn("Failed login: {}", loginRequest.getUsername());
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", loginRequest.getUsername());
+                logger.error("User not found: {}", loginRequest.getUsername());
             }
 
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            logger.error("Giriş işlemi sırasında hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred during login: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<User> updateUsername(Long id, String newUsername) {
-        logger.info("Kullanıcı adı güncelleme işlemi başladı. Kullanıcı ID: {}", id);
+        logger.info("Username update process started. User ID: {}", id);
         try {
             Optional<User> optional = userRepository.findById(id);
             if (optional.isPresent()) {
@@ -86,21 +86,21 @@ public class UserServiceImpl implements IUserService {
                 user.setUsername(newUsername);
                 User updatedUser = userRepository.save(user);
 
-                logger.info("Kullanıcı adı başarıyla güncellendi. Kullanıcı ID: {}", id);
+                logger.info("Username successfully updated. User ID: {}", id);
                 return ResponseEntity.ok(updatedUser);
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", id);
+                logger.error("User not found: {}", id);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Kullanıcı adı güncellenirken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while updating username: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword) {
-        logger.info("Şifre değişikliği talebi oluşturma işlemi başladı. Kullanıcı ID: {}", userId);
+        logger.info("Password change request process started. User ID: {}", userId);
         try {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
@@ -109,21 +109,21 @@ public class UserServiceImpl implements IUserService {
                 request.setNewPassword(passwordEncoder.encode(newPassword));
                 passwordChangeRequestRepository.save(request);
 
-                logger.info("Şifre değişikliği talebi başarıyla oluşturuldu. Kullanıcı ID: {}", userId);
+                logger.info("Password change request successfully created. User ID: {}", userId);
                 return ResponseEntity.ok().build();
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", userId);
+                logger.error("User not found: {}", userId);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Şifre değişikliği talebi oluşturulurken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while creating password change request: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<Void> approvePasswordChange(Long requestId) {
-        logger.info("Şifre değişikliği onaylama işlemi başladı. Talep ID: {}", requestId);
+        logger.info("Password change approval process started. Request ID: {}", requestId);
         try {
             Optional<PasswordChangeRequest> requestOptional = passwordChangeRequestRepository.findById(requestId);
             if (requestOptional.isPresent()) {
@@ -134,52 +134,52 @@ public class UserServiceImpl implements IUserService {
                 userRepository.save(user);
                 passwordChangeRequestRepository.delete(request);
 
-                logger.info("Şifre değişikliği onaylandı. Kullanıcı ID: {}", user.getId());
+                logger.info("Password change approved. User ID: {}", user.getId());
                 return ResponseEntity.ok().build();
             } else {
-                logger.error("Şifre değişikliği talebi bulunamadı: {}", requestId);
+                logger.error("Password change request not found: {}", requestId);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Şifre değişikliği onaylanırken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while approving password change: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<User> getUserById(Long id) {
-        logger.info("Kullanıcı bilgisi alma işlemi başladı. Kullanıcı ID: {}", id);
+        logger.info("User retrieval process started. User ID: {}", id);
         try {
             Optional<User> optional = userRepository.findById(id);
             if (optional.isPresent()) {
-                logger.info("Kullanıcı bulundu: {}", id);
+                logger.info("User found: {}", id);
                 return ResponseEntity.ok(optional.get());
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", id);
+                logger.error("User not found: {}", id);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Kullanıcı bilgisi alınırken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while retrieving user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<List<User>> getAllUsers() {
-        logger.info("Tüm kullanıcıları alma işlemi başladı.");
+        logger.info("Fetching all users process started.");
         try {
             List<User> userList = userRepository.findAll();
-            logger.info("Toplam {} kullanıcı bulundu.", userList.size());
+            logger.info("Total {} users found.", userList.size());
             return ResponseEntity.ok(userList);
         } catch (Exception e) {
-            logger.error("Tüm kullanıcılar alınırken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while fetching all users: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<User> updateUser(Long id, User user) {
-        logger.info("Kullanıcı güncelleme işlemi başladı. Kullanıcı ID: {}", id);
+        logger.info("User update process started. User ID: {}", id);
         try {
             Optional<User> optional = userRepository.findById(id);
             if (optional.isPresent()) {
@@ -192,32 +192,32 @@ public class UserServiceImpl implements IUserService {
 
                 User updatedUser = userRepository.save(existingUser);
 
-                logger.info("Kullanıcı başarıyla güncellendi. Kullanıcı ID: {}", id);
+                logger.info("User successfully updated. User ID: {}", id);
                 return ResponseEntity.ok(updatedUser);
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", id);
+                logger.error("User not found: {}", id);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Kullanıcı güncellenirken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while updating user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
 
     @Override
     public ResponseEntity<Void> deleteUser(Long id) {
-        logger.info("Kullanıcı silme işlemi başladı. Kullanıcı ID: {}", id);
+        logger.info("User deletion process started. User ID: {}", id);
         try {
             if (userRepository.existsById(id)) {
                 userRepository.deleteById(id);
-                logger.info("Kullanıcı başarıyla silindi. Kullanıcı ID: {}", id);
+                logger.info("User successfully deleted. User ID: {}", id);
                 return ResponseEntity.ok().build();
             } else {
-                logger.error("Kullanıcı bulunamadı: {}", id);
+                logger.error("User not found: {}", id);
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            logger.error("Kullanıcı silinirken hata oluştu: {}", e.getMessage(), e);
+            logger.error("Error occurred while deleting user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }

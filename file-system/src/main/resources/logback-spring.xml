@@ -31,7 +31,7 @@
     </appender>
 
     <!-- Uygulama Logları -->
-    <logger name="com.filesystem.service.impl" level="info">
+    <logger name="com.filesystem.service.impl" level="info" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="GENERAL_FILE" />
     </logger>
@@ -45,9 +45,9 @@
     <logger name="org.springframework" level="warn" />
     <logger name="org.hibernate" level="warn" />
 
-    <!-- Root Logger -->
+<!-- 
     <root level="warn">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="GENERAL_FILE" />
-    </root>
+    </root> -->
 </configuration>
