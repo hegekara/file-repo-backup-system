@@ -13,12 +13,12 @@ import java.util.Map;
 @Component
 public class UserLogFileMonitor {
 
-    private static final Logger anomalyLogger = LoggerFactory.getLogger("AnomalyLogger");
+    private static final Logger anomalyLogger = LoggerFactory.getLogger("UserAnomalyLogger");
 
     private static final String LOG_FILE_PATH = "logs/application.log";
     private long lastPosition = 0;
 
-    @Scheduled(fixedRate = 30 * 1000) // 5 dakikada bir
+    @Scheduled(fixedRate = 30 * 1000) // 30 saniyede bir
     public void monitorLogs() {
         System.out.println("Zamanlanmış görev başladı.");
         Map<String, Integer> failedLoginCounts = new HashMap<>();
