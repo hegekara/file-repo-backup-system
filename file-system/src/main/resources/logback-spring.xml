@@ -36,8 +36,13 @@
         <appender-ref ref="GENERAL_FILE" />
     </logger>
 
-    <!-- Anomali Logger (Sadece anomalileri yazacak) -->
-    <logger name="AnomalyLogger" level="warn" additivity="false">
+    <!-- User Anomali Logger (Sadece anomalileri yazacak) -->
+    <logger name="UserAnomalyLogger" level="warn" additivity="false">
+        <appender-ref ref="ANOMALY_FILE" />
+    </logger>
+
+    <!-- File Anomali Logger (Sadece anomalileri yazacak) -->
+    <logger name="FileAnomalyLogger" level="warn" additivity="false">
         <appender-ref ref="ANOMALY_FILE" />
     </logger>
 
