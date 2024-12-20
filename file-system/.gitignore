@@ -34,5 +34,5 @@ build/
 
 
 ### Log Files ###
-/logs/*
-/log-anomaly/*
+../logs/*
+../log-anomaly/*
