@@ -1,11 +1,16 @@
 package com.filesystem.service.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,12 +44,26 @@ public class UserServiceImpl implements IUserService {
     public ResponseEntity<User> createUser(User user) {
         logger.info("User creation process started.");
         try {
+            // Şifreyi şifrele
             String encryptedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassword);
 
+            // Kullanıcıya repoPath belirle
+            String repoPath = "repos/" + user.getUsername();
+            user.setRepoPath(repoPath);
+
+            // Kullanıcıyı kaydet
             User savedUser = userRepository.save(user);
-            logger.info("User successfully created: {}", savedUser.getId());
+
+            // Repo klasörünü oluştur
+            Path repoDirectory = Paths.get(repoPath);
+            Files.createDirectories(repoDirectory);
+
+            logger.info("User successfully created with repo path: {}", repoPath);
             return ResponseEntity.ok(savedUser);
+        } catch (IOException e) {
+            logger.error("Error creating directory for user repo: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (Exception e) {
             logger.error("Error occurred while creating user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
