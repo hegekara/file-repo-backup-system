@@ -20,7 +20,7 @@ public class FileLogFileMonitor {
 
     @Scheduled(fixedRate = 30 * 1000) // 30 saniyede bir
     public void monitorLogs() {
-        System.out.println("Scheduled log monitoring started.");
+        System.out.println("File log scheduled procces started.");
         try (RandomAccessFile reader = new RandomAccessFile(LOG_FILE_PATH, "r")) {
             reader.seek(lastPosition);
             String line;

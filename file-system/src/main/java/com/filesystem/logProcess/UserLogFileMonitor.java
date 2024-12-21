@@ -20,7 +20,7 @@ public class UserLogFileMonitor {
 
     @Scheduled(fixedRate = 30 * 1000) // 30 saniyede bir
     public void monitorLogs() {
-        System.out.println("Zamanlanmış görev başladı.");
+        System.out.println("User log scheduled procces started.");
         Map<String, Integer> failedLoginCounts = new HashMap<>();
 
         try (RandomAccessFile reader = new RandomAccessFile(LOG_FILE_PATH, "r")) {
