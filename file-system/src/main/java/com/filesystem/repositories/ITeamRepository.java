@@ -9,5 +9,6 @@ import com.filesystem.entities.Team;
 public interface ITeamRepository extends JpaRepository<Team, Long> {
 
     List<Team> findByMembersId(Long userId);
-
+    
+    boolean existsByName(String name);
 }
