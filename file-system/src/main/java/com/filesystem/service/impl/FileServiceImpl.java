@@ -45,6 +45,7 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public ResponseEntity<Resource> downloadFile(String entityType, Long id, String fileName) {
+        logger.info("File downloading started : entity : {} entity-id : {} file-name: {}", entityType, id, fileName);
         try {
             Path directory = resolveEntityDirectory(id, entityType);
             Path filePath = directory.resolve(fileName);
