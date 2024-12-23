@@ -11,14 +11,14 @@ import com.filesystem.entities.Team;
 import com.filesystem.service.ITeamService;
 
 @RestController
-@RequestMapping("/api/teams")
+@RequestMapping("rest/api/team")
 public class TeamControllerImpl implements ITeamController {
 
     @Autowired
     private ITeamService teamService;
 
     @Override
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Team> createTeam(@RequestBody Team team) {
         return teamService.createTeam(team);
     }

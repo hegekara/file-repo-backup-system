@@ -1,5 +1,8 @@
 package com.filesystem.service.impl;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,20 +38,35 @@ public class TeamServiceImpl implements ITeamService {
         Optional<User> manager = userRepository.findById(team.getManager().getId());
         if (manager.isEmpty()) {
             logger.warn("Team creation failed: Manager with ID {} not found.", team.getManager().getId());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Manager bulunamadı
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // Member kontrolü
+        Optional<User> member = userRepository.findById(team.getMember().getId());
+        if (member.isEmpty()) {
+            logger.warn("Team creation failed: Member with ID {} not found.", team.getMember().getId());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         // Takım adı kontrolü
         if (teamRepository.existsByName(team.getName())) {
             logger.warn("Team creation failed: Team name '{}' already exists.", team.getName());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Takım adı zaten var
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
 
         try {
             // Takım oluşturma
             team.setManager(manager.get());
+            team.setMember(member.get());
             team.setRepoPath("repos/teams/" + team.getName()); // Takım repo yolu
             Team savedTeam = teamRepository.save(team);
+
+            try {
+                Path repoDirectory = Paths.get(team.getRepoPath());
+                Files.createDirectories(repoDirectory);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
 
             logger.info("Team '{}' created successfully with ID: {}", savedTeam.getName(), savedTeam.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(savedTeam);
@@ -76,7 +94,7 @@ public class TeamServiceImpl implements ITeamService {
     public ResponseEntity<List<Team>> getTeamsByUser(Long userId) {
         logger.info("Fetching teams for user ID: {}", userId);
 
-        List<Team> teams = teamRepository.findByMembersId(userId);
+        List<Team> teams = teamRepository.findByMemberId(userId);
         if (teams.isEmpty()) {
             logger.warn("No teams found for user ID: {}", userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

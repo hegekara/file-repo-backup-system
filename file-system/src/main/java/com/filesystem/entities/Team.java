@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,16 +20,12 @@ public class Team {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "manager_id", nullable = false)
+    @JoinColumn(name = "manager", nullable = false)
     private User manager;
 
-    @ManyToMany
-    @JoinTable(
-            name = "team_members",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> members = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
 
     @Column(nullable = false, unique = true)
     private String repoPath;

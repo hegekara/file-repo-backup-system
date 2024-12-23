@@ -49,7 +49,7 @@ public class UserServiceImpl implements IUserService {
             user.setPassword(encryptedPassword);
 
             // Kullanıcıya repoPath belirle
-            String repoPath = "repos/" + user.getUsername();
+            String repoPath = "repos/users/" + user.getUsername();
             user.setRepoPath(repoPath);
 
             // Kullanıcıyı kaydet

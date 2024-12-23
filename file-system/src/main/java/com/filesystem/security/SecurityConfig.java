@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> 
-                auth.requestMatchers("/rest/api/user/login", "/rest/api/user/register").permitAll()
+                auth.requestMatchers("/rest/api/user/**", "/rest/api/team/**", "rest/api/file/**").permitAll()
                     .anyRequest().authenticated()
             )
             .userDetailsService(userDetailsService)
