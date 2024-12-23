@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
-public class BackupComponent {
+public class SyncComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(BackupComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(SyncComponent.class);
 
     private final Path rootLocation = Paths.get("uploads");
     private final Path backupLocation = Paths.get("backups");
 
-    public BackupComponent() {
+    public SyncComponent() {
         try {
             Files.createDirectories(backupLocation);
             logger.info("Backup directory initialized: {}", backupLocation.toAbsolutePath());
