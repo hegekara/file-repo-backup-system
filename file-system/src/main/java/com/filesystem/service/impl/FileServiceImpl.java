@@ -8,6 +8,9 @@ import java.nio.file.StandardCopyOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,36 @@ public class FileServiceImpl implements IFileService {
             logger.error("Error uploading file for entityType={} and id={}: {}", entityType, id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("Error uploading file: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadFile(String entityType, Long id, String fileName) {
+        try {
+            Path directory = resolveEntityDirectory(id, entityType);
+            Path filePath = directory.resolve(fileName);
+
+            if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+                logger.warn("File not found for entityType={}, id={}, fileName={}", entityType, id, fileName);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                    .body(null); // Dosya bulunamadı
+            }
+
+            Resource resource = new UrlResource(filePath.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                logger.error("File exists but cannot be read for entityType={}, id={}, fileName={}", entityType, id, fileName);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .body(null); // Dosya okunamıyor
+            }
+
+            logger.info("File downloaded successfully: {}", filePath);
+            return ResponseEntity.ok()
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                                .body(resource);
+        } catch (IOException e) {
+            logger.error("Error downloading file for entityType={}, id={}, fileName={}: {}", entityType, id, fileName, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(null);
         }
     }
 

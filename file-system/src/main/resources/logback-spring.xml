@@ -18,11 +18,35 @@
         </encoder>
     </appender>
 
-    <!-- Anomali Logları için File Appender -->
-    <appender name="ANOMALY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log-anomaly/application.log</file>
+    <!-- User Anomali Logları için File Appender -->
+    <appender name="USER_ANOMALY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/user-anomaly.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>log-anomaly/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/user-anomaly-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Anomali Logları için File Appender -->
+    <appender name="FILE_ANOMALY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/file-anomaly.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/file-anomaly-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Sync Anomali Logları için File Appender -->
+    <appender name="SYNC_ANOMALY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/sync-anomaly.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/sync-anomaly-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -36,22 +60,26 @@
         <appender-ref ref="GENERAL_FILE" />
     </logger>
 
-    <!-- User Anomali Logger (Sadece anomalileri yazacak) -->
+    <!-- User Anomali Logger -->
     <logger name="UserAnomalyLogger" level="warn" additivity="false">
-        <appender-ref ref="ANOMALY_FILE" />
+        <appender-ref ref="USER_ANOMALY_FILE" />
     </logger>
 
-    <!-- File Anomali Logger (Sadece anomalileri yazacak) -->
+    <!-- File Anomali Logger -->
     <logger name="FileAnomalyLogger" level="warn" additivity="false">
-        <appender-ref ref="ANOMALY_FILE" />
+        <appender-ref ref="FILE_ANOMALY_FILE" />
+    </logger>
+
+    <!-- Sync Anomali Logger -->
+    <logger name="SyncAnomalyLogger" level="warn" additivity="false">
+        <appender-ref ref="SYNC_ANOMALY_FILE" />
     </logger>
 
     <!-- Hibernate ve Spring Logları -->
     <logger name="org.springframework" level="warn" />
     <logger name="org.hibernate" level="warn" />
 
-<!-- 
-    <root level="warn">
+<!--     <root level="info">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="GENERAL_FILE" />
     </root> -->
