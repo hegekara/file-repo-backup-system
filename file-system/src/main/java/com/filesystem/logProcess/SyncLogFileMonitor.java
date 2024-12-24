@@ -15,7 +15,7 @@ public class SyncLogFileMonitor {
     private static final String LOG_FILE_PATH = "logs/application.log";
     private long lastPosition = 0;
 
-    @Scheduled(fixedRate = 30 * 1000) // 30 saniyede bir
+    @Scheduled(fixedRate = 2 * 60 * 1000) // 30 saniyede bir
     public void monitorLogs() {
         System.out.println("Scheduled procces started - SyncAnomly");
         try (RandomAccessFile reader = new RandomAccessFile(LOG_FILE_PATH, "r")) {

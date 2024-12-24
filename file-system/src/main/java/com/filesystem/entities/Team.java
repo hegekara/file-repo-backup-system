@@ -1,5 +1,7 @@
 package com.filesystem.entities;
 
+import com.filesystem.entities.user.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

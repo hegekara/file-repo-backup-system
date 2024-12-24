@@ -1,25 +1,23 @@
-package com.filesystem.entities;
+package com.filesystem.entities.user;
 
 import com.filesystem.constants.Role;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@MappedSuperclass
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table
-public class User {
+public class BaseUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +38,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false, unique = true)
-    private String repoPath;
 }
