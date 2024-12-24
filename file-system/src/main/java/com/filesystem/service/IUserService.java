@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.Response;
 import com.filesystem.entities.User;
 
 public interface IUserService {
@@ -19,7 +20,7 @@ public interface IUserService {
     
     public ResponseEntity<Void> deleteUser(Long id);
 
-    public ResponseEntity<String> login(LoginRequest loginRequest);
+    public ResponseEntity<Response> login(LoginRequest loginRequest);
 
     public ResponseEntity<User> updateUsername(Long id, String newUsername);
 

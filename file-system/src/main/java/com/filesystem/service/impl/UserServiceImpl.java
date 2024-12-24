@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
+import com.filesystem.entities.Response;
 import com.filesystem.entities.User;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
 import com.filesystem.repositories.IUserRepository;
@@ -71,7 +72,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseEntity<String> login(LoginRequest loginRequest) {
+    public ResponseEntity<Response> login(LoginRequest loginRequest) {
         logger.info("Login process started: {}", loginRequest.getUsername());
 
         try {
@@ -80,7 +81,7 @@ public class UserServiceImpl implements IUserService {
                 if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                     String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
                     logger.info("Login successful: {}", user.getUsername());
-                    return ResponseEntity.ok(token);
+                    return ResponseEntity.ok().body(new Response(user, token, "Login succsesful!"));
                 }
 
                 logger.warn("Failed login: {}", loginRequest.getUsername());

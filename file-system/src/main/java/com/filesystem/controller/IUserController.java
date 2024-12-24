@@ -5,13 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.Response;
 import com.filesystem.entities.User;
 
 public interface IUserController {
 
     public ResponseEntity<User> createUser(User user);
 
-    public ResponseEntity<String> login( LoginRequest loginRequest);
+    public ResponseEntity<Response> login( LoginRequest loginRequest);
 
     public ResponseEntity<User> getUserById(Long id);
 

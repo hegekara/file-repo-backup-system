@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.filesystem.controller.IUserController;
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.Response;
 import com.filesystem.entities.User;
 import com.filesystem.service.IUserService;
 
@@ -33,7 +34,7 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
         return userService.login(loginRequest);
     }
 
