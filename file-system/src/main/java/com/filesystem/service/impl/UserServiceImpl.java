@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
 import com.filesystem.repositories.IUserRepository;
 import com.filesystem.security.JwtUtil;

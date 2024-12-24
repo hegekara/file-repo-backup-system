@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.filesystem.entities.Team;
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 import com.filesystem.repositories.ITeamRepository;
 import com.filesystem.repositories.IUserRepository;
 import com.filesystem.service.ITeamService;

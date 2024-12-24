@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.Response;
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 
 public interface IUserService {
 

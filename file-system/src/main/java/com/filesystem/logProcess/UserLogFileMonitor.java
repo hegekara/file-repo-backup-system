@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 import com.filesystem.repositories.IUserRepository;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class UserLogFileMonitor {
             failedLoginCounts.merge(username, 1, Integer::sum);
 
             if (failedLoginCounts.get(username) >= 3) {
-                anomalyLogger.warn("Anomaly detected: {} failed login 3 times.", username);
+                anomalyLogger.warn("Anomaly detected: {} failed login {} times.", username, failedLoginCounts.get(username));
             }
         }
     }

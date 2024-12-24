@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.filesystem.controller.IUserController;
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.Response;
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 import com.filesystem.service.IUserService;
 
 @RestController
@@ -48,12 +48,6 @@ public class UserControllerImpl implements IUserController {
     @PostMapping("/{id}/request-password-change")
     public ResponseEntity<Void> requestPasswordChange(@PathVariable Long id, @RequestBody String newPassword) {
         return userService.requestPasswordChange(id, newPassword);
-    }
-
-    @Override
-    @PostMapping("/approve-password-change/{requestId}")
-    public ResponseEntity<Void> approvePasswordChange(@PathVariable Long requestId) {
-        return userService.approvePasswordChange(requestId);
     }
 
     @Override

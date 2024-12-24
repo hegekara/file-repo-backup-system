@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.Response;
-import com.filesystem.entities.User;
+import com.filesystem.entities.user.User;
 
 public interface IUserController {
 
@@ -25,7 +25,5 @@ public interface IUserController {
     public ResponseEntity<User> updateUsername(Long id, String newUsername);
 
     public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword);
-
-    public ResponseEntity<Void> approvePasswordChange(Long requestId);
 
 }
