@@ -9,6 +9,7 @@ import Home from "./pages/Home"
 import NoPage from "./pages/NoPage";
 import AdminLogin from "./admin-panel/AdminLogin";
 import AdminPanel from "./admin-panel/AdminPanel";
+import Repo from "./pages/Repo";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/my-repo" element={<Repo />} />
 
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-panel" element={<AdminPanel />} />

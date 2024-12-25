@@ -1,13 +1,20 @@
 package com.filesystem.service.impl;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.filesystem.entities.Team;
+import com.filesystem.entities.user.User;
+import com.filesystem.repositories.ITeamRepository;
+import com.filesystem.repositories.IUserRepository;
 import com.filesystem.service.IFileService;
 
 @Service
@@ -23,11 +34,18 @@ public class FileServiceImpl implements IFileService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
-    private final Path rootLocation = Paths.get("uploads");
+    private final Path rootLocation = Paths.get("repos");
+
+    @Autowired
+    private IUserRepository userRepository;
+
+    @Autowired
+    private ITeamRepository teamRepository;
 
     @Override
     public ResponseEntity<String> uploadFile(String entityType, Long id, MultipartFile file) {
         try {
+            System.out.println("upload service başladı");
             Path directory = resolveEntityDirectory(id, entityType);
 
             Files.createDirectories(directory);
@@ -90,9 +108,97 @@ public class FileServiceImpl implements IFileService {
         }
     }
 
+    @Override
+    public ResponseEntity<List<String>> listFiles(String entityType, Long id) {
+        try {
+            Path directory = resolveEntityDirectory(id, entityType);
+
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                logger.warn("Directory not found for entityType={}, id={}", entityType, id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                    .body(Collections.emptyList()); // Klasör bulunamadı
+            }
+
+            List<String> fileNames = Files.list(directory)
+                                        .filter(Files::isRegularFile)
+                                        .map(path -> path.getFileName().toString())
+                                        .collect(Collectors.toList());
+
+            return ResponseEntity.ok(fileNames);
+        } catch (IOException e) {
+            logger.error("Error listing files for entityType={}, id={}: {}", entityType, id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Collections.emptyList());
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> openFile(String entityType, Long id, String fileName) {
+
+        System.out.println("Headless mode: " + System.getProperty("java.awt.headless"));
+
+        
+        // Resolve the directory and file path
+        Path directory = resolveEntityDirectory(id, entityType);
+    
+        if (directory == null || !Files.exists(directory) || !Files.isDirectory(directory)) {
+            System.out.println("The specified directory does not exist or is invalid: " + directory);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Directory not found");
+        }
+    
+        Path filePath = directory.resolve(fileName).toAbsolutePath(); // Resolve to absolute path
+        System.out.println("Absolute Path: " + filePath);
+    
+        if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            System.out.println("File not found: " + filePath);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body("File not found");
+        }
+    
+        File file = filePath.toFile();
+    
+        if (!Desktop.isDesktopSupported()) {
+            System.out.println("Desktop environment is not supported.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Desktop environment is not supported. File path: " + filePath);
+        }
+    
+        Desktop desktop = Desktop.getDesktop();
+    
+        try {
+            desktop.open(file); // Open the file using the default application
+            System.out.println("File opened successfully: " + filePath);
+            return ResponseEntity.ok("File opened: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error opening file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error opening file");
+        }
+    }
+    
+
     private Path resolveEntityDirectory(Long id, String entityType) {
-        Path directory = rootLocation.resolve(entityType + "-" + id);
-        logger.debug("Resolved directory for entityType={}, id={}: {}", entityType, id, directory);
-        return directory;
+        if("users".equals(entityType)){
+            Optional<User> optional = userRepository.findById(id);
+            if(optional.isPresent()){
+                String username = optional.get().getUsername();
+                Path directory = rootLocation.resolve(entityType + "/" + username);
+                System.out.println("\n\npath: " + directory);
+                logger.debug("Resolved directory for entityType={}, id={}: {}", entityType, id, directory);
+                return directory;
+            }
+        }
+        if("teams".equals(entityType)){
+            Optional<Team> optional = teamRepository.findById(id);
+            if(optional.isPresent()){
+                String teamName = optional.get().getName();
+                Path directory = rootLocation.resolve(entityType + "/" + teamName);
+                System.out.println("\n\npath: " + directory);
+                logger.debug("Resolved directory for entityType={}, id={}: {}", entityType, id, directory);
+                return directory;
+            }
+        }
+        return null;
     }
 }

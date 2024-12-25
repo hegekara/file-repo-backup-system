@@ -1,5 +1,7 @@
 package com.filesystem.controller;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,4 +13,8 @@ public interface IFileController {
     public ResponseEntity<Resource> downloadFile(String entityType, Long id, String fileName);
 
     public ResponseEntity<String> deleteFile(String entityType, Long userId, String fileName);
+
+    public ResponseEntity<List<String>> listFiles(String entityType, Long id);
+    
+    public ResponseEntity<String> openFile( String entityType, Long id, String fileName);
 }

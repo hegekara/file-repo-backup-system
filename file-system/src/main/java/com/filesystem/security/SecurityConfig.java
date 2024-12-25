@@ -32,8 +32,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> 
-                auth.requestMatchers("/rest/api/admin/**", "/rest/api/user/**", "/rest/api/team/**", "rest/api/file/**").permitAll()
-                    .anyRequest().authenticated()
+                //auth.requestMatchers("/rest/api/admin/**", "/rest/api/user/**", "/rest/api/team/**", "rest/api/files/**").permitAll()
+                auth.anyRequest().permitAll()
             )
             .userDetailsService(userDetailsService)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

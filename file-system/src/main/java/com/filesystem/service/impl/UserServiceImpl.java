@@ -45,7 +45,6 @@ public class UserServiceImpl implements IUserService {
     public ResponseEntity<User> createUser(User user) {
         logger.info("User creation process started.");
         try {
-            // Şifreyi şifrele
             String encryptedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassword);
 

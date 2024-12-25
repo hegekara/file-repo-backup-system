@@ -38,11 +38,11 @@ public class UserLogFileMonitor {
             while ((line = reader.readLine()) != null) {
                 failedLoginControl(line);
                 passwordChangeControl(line);
+                successLoginControl(line);
             }
             lastPosition = reader.getFilePointer();
 
-            // Sayaçları sıfırlama (isteğe bağlı)
-            failedLoginCounts.clear();
+            //failedLoginCounts.clear();
             passwordRequestCounts.clear();
 
         } catch (IOException e) {
@@ -58,6 +58,14 @@ public class UserLogFileMonitor {
             if (failedLoginCounts.get(username) >= 3) {
                 anomalyLogger.warn("Anomaly detected: {} failed login {} times.", username, failedLoginCounts.get(username));
             }
+        }
+    }
+
+    private void successLoginControl(String line) {
+        if (line.contains("successful")) {
+            String username = extractUsernameFromLoginLog(line);
+
+            failedLoginCounts.remove(username);
         }
     }
 
@@ -85,6 +93,11 @@ public class UserLogFileMonitor {
 
     private String extractUsernameFromLog(String logLine) {
         int startIndex = logLine.indexOf("login:") + 6;
+        return logLine.substring(startIndex).trim();
+    }
+
+    private String extractUsernameFromLoginLog(String logLine) {
+        int startIndex = logLine.indexOf("successful:") + 11;
         return logLine.substring(startIndex).trim();
     }
 
