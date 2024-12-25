@@ -1,0 +1,72 @@
+.file-list-container {
+  margin-top: 20px;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.file-list-item {
+  display: flex;
+  justify-content: space-between; /* Dosya adı ve butonları ayır */
+  align-items: center; /* Dikey ortalama */
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  transition: background-color 0.3s ease;
+}
+
+.file-list-item:hover {
+  background-color: #ecf0f1;
+}
+
+.file-name {
+  flex-grow: 1; /* Dosya adının esnek yer kaplamasını sağlar */
+  font-size: 1rem;
+  color: #2c3e50;
+  word-break: break-word; /* Uzun dosya adlarının taşmasını önler */
+}
+
+.file-buttons {
+  display: flex;
+  gap: 10px; /* Butonlar arasına boşluk bırak */
+}
+
+.file-download-button,
+.file-delete-button,
+.file-open-button {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-download-button {
+  background-color: #3498db;
+}
+
+.file-download-button:hover {
+  background-color: #2980b9;
+}
+
+.file-delete-button {
+  background-color: #e74c3c;
+}
+
+.file-delete-button:hover {
+  background-color: #c0392b;
+}
+
+.file-open-button {
+  background-color: #a5a291;
+}
+
+.file-open-button:hover {
+  background-color: #868476;
+}

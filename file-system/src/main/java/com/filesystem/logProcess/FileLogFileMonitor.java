@@ -44,8 +44,8 @@ public class FileLogFileMonitor {
             String userInfo = extractUserInfoFromUploadLog(logLine);
             fileUploadCounts.merge(userInfo, 1, Integer::sum);
 
-            if (fileUploadCounts.get(userInfo) >= 2) {
-                anomalyLogger.warn("Anomaly detected: {} uploaded the same file twice.", userInfo);
+            if (fileUploadCounts.get(userInfo) >= 3) {
+                anomalyLogger.warn("Anomaly detected: {} uploaded the same file {} times.", userInfo, fileUploadCounts.get(userInfo));
             }
         }
     }
@@ -57,7 +57,7 @@ public class FileLogFileMonitor {
 
             fileDownloadCounts.forEach((user, downloadCount) -> {
                 if (downloadCount >= 5) {
-                    anomalyLogger.warn("Anomaly detected: {} performed {} downloads in the last 30 seconds.", user, downloadCount);
+                    anomalyLogger.warn("Anomaly detected: {} download the same file {} times.", userInfo, fileDownloadCounts.get(userInfo));
                 }
             });
         }

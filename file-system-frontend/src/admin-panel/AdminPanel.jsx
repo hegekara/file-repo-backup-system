@@ -28,7 +28,7 @@ const AdminPanel = () => {
             <Link to="/personel-login" className="home-button">Personel Login</Link>
           </div>
         )}
-        {isLoggedIn && (role === "admin" || role === "manager" || role === "personel") && (
+        {isLoggedIn && (role === "admin") && (
           <div>
             <p className="desc">Users and bookings can be managed from the admin panel</p>
             <Link to="/admin-list-room" className="home-button">Manage Room</Link>

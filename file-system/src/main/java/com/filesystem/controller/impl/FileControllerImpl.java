@@ -1,5 +1,8 @@
 package com.filesystem.controller.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,10 @@ public class FileControllerImpl implements IFileController {
         @PathVariable Long id,
         @RequestParam("file") MultipartFile file
     ) {
-        return fileService.uploadFile(entityType, id, file );
+        System.out.println("\n\nupload controller başladı");
+
+        // File Service metodu çağrılıyor
+        return fileService.uploadFile(entityType, id, file);
     }
 
     @GetMapping("/download")
@@ -49,4 +55,32 @@ public class FileControllerImpl implements IFileController {
     ) {
         return fileService.deleteFile(entityType, id, fileName);
     }
+
+    @Override
+    @GetMapping("/list")
+    public ResponseEntity<List<String>> listFiles(
+        @RequestParam String entityType,
+        @RequestParam Long id) {
+        System.out.println("Received request to list files for entityType= "+entityType+" and id= "+ id);
+    
+        if (entityType == null || entityType.isEmpty() || id == null) {
+            System.out.println("invalid parameters");
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+    
+        return fileService.listFiles(entityType, id);
+    }
+
+    @Override
+    @GetMapping("/open/{entityType}/{id}/{fileName}")
+    public ResponseEntity<String> openFile(
+        @PathVariable String entityType,
+        @PathVariable Long id,
+        @PathVariable String fileName
+    ){
+        System.out.println("open isteği geldi");
+        return fileService.openFile(entityType, id, fileName);
+    }
+    
+    
 }
