@@ -27,18 +27,6 @@
     gap: 1.5rem;
   }
   
-  .header-reservation-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-  }
-  
   .header-reservation-button:hover {
     background-color: #0056b3;
   }
@@ -79,5 +67,72 @@
   
   .dropdown-item:hover {
     background-color: #cbcbcb;
+  }
+
+  .create-team {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .team-icon {
+    color: #ffffff;
+    cursor: pointer;
+  }
+  
+  .team-dropdown-menu {
+    position: absolute;
+    top: 3.5rem;
+    left: -3rem;
+    background-color: #ffffff;
+    color: #333;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 25px;
+    z-index: 1001;
+    width: 15rem;
+  }
+  
+  .team-title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+  }
+  
+  .team-dropdown-item {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .team-dropdown-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .team-dropdown-item:focus {
+    outline: none;
+    border-color: #0056b3;
+  }
+  
+  .create-team-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .create-team-button:hover {
+    background-color: #0056b3;
   }
   

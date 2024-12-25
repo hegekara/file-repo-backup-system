@@ -134,9 +134,6 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public ResponseEntity<String> openFile(String entityType, Long id, String fileName) {
-
-        System.out.println("Headless mode: " + System.getProperty("java.awt.headless"));
-
         
         // Resolve the directory and file path
         Path directory = resolveEntityDirectory(id, entityType);
