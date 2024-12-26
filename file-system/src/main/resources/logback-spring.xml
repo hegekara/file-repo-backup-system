@@ -60,6 +60,12 @@
         <appender-ref ref="GENERAL_FILE" />
     </logger>
 
+    <!-- Senkronizasyon Logları -->
+    <logger name="com.filesystem.backupProcess" level="info" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="GENERAL_FILE" />
+    </logger>
+
     <!-- User Anomali Logger -->
     <logger name="UserAnomalyLogger" level="warn" additivity="false">
         <appender-ref ref="USER_ANOMALY_FILE" />

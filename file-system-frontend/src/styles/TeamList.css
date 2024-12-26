@@ -1,0 +1,32 @@
+.team-list-container {
+    margin-top: 20px;
+  }
+  
+  .team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .team-list-item {
+    display: flex;
+    justify-content: space-between; /* Dosya adı ve butonları ayır */
+    align-items: center; /* Dikey ortalama */
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    transition: background-color 0.3s ease;
+  }
+  
+  .team-list-item:hover {
+    background-color: #ecf0f1;
+  }
+  
+  .team-name {
+    flex-grow: 1; /* Dosya adının esnek yer kaplamasını sağlar */
+    font-size: 1rem;
+    color: #2c3e50;
+    word-break: break-word; /* Uzun dosya adlarının taşmasını önler */
+  }

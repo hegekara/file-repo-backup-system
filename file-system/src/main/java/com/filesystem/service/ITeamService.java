@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.Team;
+import com.filesystem.entities.TeamRequest;
 
 public interface ITeamService {
 
-    public ResponseEntity<Team> createTeam(Team team);
+    public ResponseEntity<Team> createTeam(TeamRequest team);
 
     public ResponseEntity<List<Team>> getAllTeams();
 

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.filesystem.controller.IFileController;
 import com.filesystem.service.IFileService;
 
+
 @RestController
 @RequestMapping("/rest/api/files")
 public class FileControllerImpl implements IFileController {
@@ -34,7 +35,6 @@ public class FileControllerImpl implements IFileController {
     ) {
         System.out.println("\n\nupload controller başladı");
 
-        // File Service metodu çağrılıyor
         return fileService.uploadFile(entityType, id, file);
     }
 
@@ -81,6 +81,18 @@ public class FileControllerImpl implements IFileController {
         System.out.println("open isteği geldi");
         return fileService.openFile(entityType, id, fileName);
     }
+
+    @Override
+    @PostMapping("/share/{entityType}/{id}/{fileName}/to/{teamId}")
+    public ResponseEntity<String> shareFile(
+        @PathVariable String entityType,
+        @PathVariable Long id,
+        @PathVariable String fileName,
+        @PathVariable Long teamId) {
+        
+        return fileService.shareFile(entityType, id, fileName, teamId);
+    }
+    
     
     
 }

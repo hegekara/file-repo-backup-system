@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.filesystem.entities.Team;
+import com.filesystem.entities.TeamRequest;
 import com.filesystem.entities.user.User;
 import com.filesystem.repositories.ITeamRepository;
 import com.filesystem.repositories.IUserRepository;
@@ -31,20 +34,19 @@ public class TeamServiceImpl implements ITeamService {
     private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
     @Override
-    public ResponseEntity<Team> createTeam(Team team) {
+    public ResponseEntity<Team> createTeam(TeamRequest team) {
         logger.info("Starting team creation for name: {}", team.getName());
 
         // Manager kontrolü
-        Optional<User> manager = userRepository.findById(team.getManager().getId());
+        Optional<User> manager = userRepository.findById(team.getManager());
         if (manager.isEmpty()) {
-            logger.warn("Team creation failed: Manager with ID {} not found.", team.getManager().getId());
+            logger.warn("Team creation failed: Manager with ID {} not found.", team.getManager());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        // Member kontrolü
-        Optional<User> member = userRepository.findById(team.getMember().getId());
-        if (member.isEmpty()) {
-            logger.warn("Team creation failed: Member with ID {} not found.", team.getMember().getId());
+        User member = userRepository.findByUsername(team.getTeamMemberName());
+        if (member==null) {
+            logger.warn("Team creation failed: Member with ID {} not found.", team.getTeamMemberName());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
@@ -56,13 +58,15 @@ public class TeamServiceImpl implements ITeamService {
 
         try {
             // Takım oluşturma
-            team.setManager(manager.get());
-            team.setMember(member.get());
-            team.setRepoPath("repos/teams/" + team.getName()); // Takım repo yolu
-            Team savedTeam = teamRepository.save(team);
+            Team newTeam = new Team();
+            newTeam.setName(team.getName());
+            newTeam.setManager(manager.get());;
+            newTeam.setMember(member);;
+            newTeam.setRepoPath("repos/teams/" + team.getName()); // Takım repo yolu
+            Team savedTeam = teamRepository.save(newTeam);
 
             try {
-                Path repoDirectory = Paths.get(team.getRepoPath());
+                Path repoDirectory = Paths.get(newTeam.getRepoPath());
                 Files.createDirectories(repoDirectory);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -94,7 +98,13 @@ public class TeamServiceImpl implements ITeamService {
     public ResponseEntity<List<Team>> getTeamsByUser(Long userId) {
         logger.info("Fetching teams for user ID: {}", userId);
 
-        List<Team> teams = teamRepository.findByMemberId(userId);
+        List<Team> teams = Stream.concat(
+            teamRepository.findByMemberId(userId).stream(),
+            teamRepository.findByManagerId(userId).stream()
+            )
+            .distinct() 
+            .collect(Collectors.toList());
+
         if (teams.isEmpty()) {
             logger.warn("No teams found for user ID: {}", userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

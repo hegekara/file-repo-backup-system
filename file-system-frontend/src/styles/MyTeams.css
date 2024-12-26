@@ -1,0 +1,91 @@
+.team-container {
+    margin: 5rem auto;
+    padding: 2rem;
+    max-width: 800px;
+    background-color: #ffffff;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.team-header {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.repo-error {
+    text-align: center;
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Team list styling */
+.team-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.team-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-list li:hover {
+    background-color: #d5e6f1;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.team-list li button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.team-list li button:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+    .team-container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+    }
+
+    .team-header {
+        font-size: 1.8em;
+    }
+
+    .team-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .team-list li button {
+        align-self: flex-end;
+        margin-top: 10px;
+    }
+}

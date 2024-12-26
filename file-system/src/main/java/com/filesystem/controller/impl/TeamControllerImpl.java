@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.filesystem.controller.ITeamController;
 import com.filesystem.entities.Team;
+import com.filesystem.entities.TeamRequest;
 import com.filesystem.service.ITeamService;
 
 @RestController
-@RequestMapping("rest/api/team")
+@RequestMapping("/rest/api/team")
 public class TeamControllerImpl implements ITeamController {
 
     @Autowired
@@ -19,7 +20,8 @@ public class TeamControllerImpl implements ITeamController {
 
     @Override
     @PostMapping("/create")
-    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
+    public ResponseEntity<Team> createTeam(@RequestBody TeamRequest team) {
+        System.out.println("takım oluşturma başlatıldı");
         return teamService.createTeam(team);
     }
 

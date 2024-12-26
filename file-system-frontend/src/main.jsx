@@ -10,6 +10,8 @@ import NoPage from "./pages/NoPage";
 import AdminLogin from "./admin-panel/AdminLogin";
 import AdminPanel from "./admin-panel/AdminPanel";
 import Repo from "./pages/Repo";
+import MyTeams from "./pages/MyTeams";
+import TeamRepo from "./pages/TeamRepo";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -20,6 +22,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
         <Route path="/my-repo" element={<Repo />} />
+        <Route path="/my-teams" element={<MyTeams />} />
+        <Route path="/team-repo/:teamId" element={<TeamRepo />} />
 
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-panel" element={<AdminPanel />} />

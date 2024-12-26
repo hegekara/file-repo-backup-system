@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 import Header from '../components/Header';
+import Modal from '../components/Modal';
 import FileList from '../components/FileList';
 import '../styles/Repo.css';
 
@@ -10,6 +11,9 @@ function Repo() {
   const [id, setId] = useState(localStorage.getItem("id") || "");
   const [fileList, setFileList] = useState([]);
   const [error, setError] = useState("");
+  const [teams, setTeams] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(""); // Paylaşılacak dosya
+  const [isModalOpen, setIsModalOpen] = useState(false); // Popup kontrolü
 
   const handleGetRepo = async () => {
     if (!entityType || !id) {
@@ -102,10 +106,43 @@ function Repo() {
     }
   }
 
+  const handleShare = async (fileName, teamId) => {
+    try {
+      const response = await API.post(`/files/share/${entityType}/${id}/${fileName}/to/${teamId}`);
+      console.log("File shared:", response.data);
+      setError("");
+      setIsModalOpen(false); // Popup'u kapat
+    } catch (error) {
+      setError("File could not be shared");
+    }
+  };
+
+  const handleGetUserTeams = async () => {
+    try {
+      const response = await API.get(`/team/user/${id}`);
+      setTeams(response.data);
+    } catch (error) {
+      setError("User team could not be found");
+    }
+  };
+
+  const openShareModal = (fileName) => {
+    setSelectedFile(fileName);
+    setIsModalOpen(true);
+  };
+
+  const closeShareModal = () => {
+    setSelectedFile("");
+    setIsModalOpen(false);
+  };
+
+
+
   useEffect(() => {
     if (localStorage.getItem("jwtToken")) {
       setIsLoggedIn(true);
       handleGetRepo();
+      handleGetUserTeams();
     }
   }, []);
 
@@ -130,7 +167,29 @@ function Repo() {
             <FileList files={fileList} 
                 onDownload={handleDownload}
                 onDelete={handleDelete}
-                onOpen={handleOpen}/>
+                onOpen={handleOpen}
+                onShare={openShareModal}/>
+                {isModalOpen && (
+                  <Modal 
+                    title="Share File" 
+                    onClose={closeShareModal}
+                  >
+                    <h3>Share "{selectedFile}" with:</h3>
+                    <ul className="modal-team-list">
+                      {teams.map((team) => (
+                        <li className="modal-team-item" key={team.id}>
+                          <span className="modal-team-name">{team.name}</span>
+                          <button
+                            className="modal-share-button"
+                            onClick={() => handleShare(selectedFile, team.id)}
+                          >
+                            Share
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </Modal>
+                )}
           </>
         ) : (
           <p>Please log in to view files.</p>
