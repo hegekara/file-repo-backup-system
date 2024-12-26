@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.filesystem.constants.PasswordStatus;
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
@@ -118,17 +119,18 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword) {
-        logger.info("Password change request process started. User ID: {}", userId);
+    public ResponseEntity<Void> requestPasswordChange(Long userId) {
+        
         try {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
+                logger.info("Password change request process started. Username: {}", user.get().getUsername());
                 PasswordChangeRequest request = new PasswordChangeRequest();
                 request.setUser(user.get());
-                request.setNewPassword(passwordEncoder.encode(newPassword));
+                request.setStatus(PasswordStatus.WAITING);
                 passwordChangeRequestRepository.save(request);
 
-                logger.info("Password change request successfully created. User ID: {}", userId);
+                logger.info("Password change request successfully created. Username: {}", user.get().getUsername());
                 return ResponseEntity.ok().build();
             } else {
                 logger.error("User not found: {}", userId);
@@ -136,31 +138,6 @@ public class UserServiceImpl implements IUserService {
             }
         } catch (Exception e) {
             logger.error("Error occurred while creating password change request: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<Void> approvePasswordChange(Long requestId) {
-        logger.info("Password change approval process started. Request ID: {}", requestId);
-        try {
-            Optional<PasswordChangeRequest> requestOptional = passwordChangeRequestRepository.findById(requestId);
-            if (requestOptional.isPresent()) {
-                PasswordChangeRequest request = requestOptional.get();
-                User user = request.getUser();
-                user.setPassword(request.getNewPassword());
-
-                userRepository.save(user);
-                passwordChangeRequestRepository.delete(request);
-
-                logger.info("Password change approved. User ID: {}", user.getId());
-                return ResponseEntity.ok().build();
-            } else {
-                logger.error("Password change request not found: {}", requestId);
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            logger.error("Error occurred while approving password change: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -206,8 +183,6 @@ public class UserServiceImpl implements IUserService {
                 existingUser.setUsername(user.getUsername());
                 existingUser.setFirstName(user.getFirstName());
                 existingUser.setLastName(user.getLastName());
-                existingUser.setRole(user.getRole());
-                existingUser.setPassword(user.getPassword());
 
                 User updatedUser = userRepository.save(existingUser);
 
@@ -219,24 +194,6 @@ public class UserServiceImpl implements IUserService {
             }
         } catch (Exception e) {
             logger.error("Error occurred while updating user: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteUser(Long id) {
-        logger.info("User deletion process started. User ID: {}", id);
-        try {
-            if (userRepository.existsById(id)) {
-                userRepository.deleteById(id);
-                logger.info("User successfully deleted. User ID: {}", id);
-                return ResponseEntity.ok().build();
-            } else {
-                logger.error("User not found: {}", id);
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            logger.error("Error occurred while deleting user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }

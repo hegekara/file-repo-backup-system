@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +45,8 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     @PostMapping("/{id}/request-password-change")
-    public ResponseEntity<Void> requestPasswordChange(@PathVariable Long id, @RequestBody String newPassword) {
-        return userService.requestPasswordChange(id, newPassword);
+    public ResponseEntity<Void> requestPasswordChange(@PathVariable Long id) {
+        return userService.requestPasswordChange(id);
     }
 
     @Override
@@ -65,13 +64,8 @@ public class UserControllerImpl implements IUserController {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        System.out.println("\n\nGüncelleme isteği geldi");
         return userService.updateUser(id, user);
-    }
-
-    @Override
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userService.deleteUser(id);
     }
 }
 

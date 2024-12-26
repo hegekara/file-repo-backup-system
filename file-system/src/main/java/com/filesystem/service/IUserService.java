@@ -17,14 +17,10 @@ public interface IUserService {
     public ResponseEntity<List<User>> getAllUsers();
 
     public ResponseEntity<User> updateUser(Long id, User user);
-    
-    public ResponseEntity<Void> deleteUser(Long id);
 
     public ResponseEntity<Response> login(LoginRequest loginRequest);
 
     public ResponseEntity<User> updateUsername(Long id, String newUsername);
 
-    public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword);
-
-    public ResponseEntity<Void> approvePasswordChange(Long requestId);
+    public ResponseEntity<Void> requestPasswordChange(Long userId);
 }
