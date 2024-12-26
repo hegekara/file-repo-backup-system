@@ -19,7 +19,7 @@ public class FileLogFileMonitor {
     private final Map<String, Integer> fileUploadCounts = new HashMap<>();
     private final Map<String, Integer> fileDownloadCounts = new HashMap<>();
 
-    @Scheduled(fixedRate = 2 * 60 * 1000) // 30 saniyede bir
+    @Scheduled(fixedRate = 2 * 60 * 1000) // 2 dakikada bir
     public void monitorLogs() {
         System.out.println("Scheduled procces started - FileAnomly");
         try (RandomAccessFile reader = new RandomAccessFile(LOG_FILE_PATH, "r")) {

@@ -7,33 +7,73 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SyncComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(SyncComponent.class);
 
-    private final Path rootLocation = Paths.get("uploads");
+    private final Path rootLocation = Paths.get("repos");
     private final Path backupLocation = Paths.get("backups");
+
+    // Önceki dosya durumlarını saklamak için bir harita
+    private final Map<Path, FileTime> fileTimestamps = new HashMap<>();
 
     public SyncComponent() {
         try {
             Files.createDirectories(backupLocation);
             logger.info("Backup directory initialized: {}", backupLocation.toAbsolutePath());
+            initializeFileTimestamps();
         } catch (IOException e) {
             logger.error("Error initializing backup directory: {}", e.getMessage());
         }
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000) // 5 dakikada bir
-    public void backupFiles() {
+    private void initializeFileTimestamps() throws IOException {
+        Files.walkFileTree(rootLocation, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                fileTimestamps.put(file, attrs.lastModifiedTime());
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        logger.info("File timestamps initialized.");
+    }
+
+    @Scheduled(fixedRate = 30000) // Her 30 saniyede bir çalışır
+    public void backupChangedFiles() {
         logger.info("Backup process started at {}", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME));
         try {
-            Files.walk(rootLocation)
-                .filter(Files::isRegularFile) // Sadece dosyaları yedekle
-                .forEach(this::backupFile);
+            Files.walkFileTree(rootLocation, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    try {
+                        FileTime currentModifiedTime = attrs.lastModifiedTime();
+                        FileTime previousModifiedTime = fileTimestamps.get(file);
+
+                        // Dosya yeni mi veya değişmiş mi kontrol et
+                        if (previousModifiedTime == null || !currentModifiedTime.equals(previousModifiedTime)) {
+                            backupFile(file);
+                            fileTimestamps.put(file, currentModifiedTime); // Durumu güncelle
+                        }
+                    } catch (Exception e) {
+                        logger.error("Error processing file {}: {}", file, e.getMessage());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    logger.error("Error accessing file {}: {}", file, exc.getMessage());
+                    return FileVisitResult.CONTINUE;
+                }
+            });
 
             logger.info("Backup process completed at {}", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME));
         } catch (IOException e) {
@@ -43,7 +83,6 @@ public class SyncComponent {
 
     private void backupFile(Path file) {
         try {
-            // Yedek dizinine aynı dosya yapısıyla kopyala
             Path relativePath = rootLocation.relativize(file);
             Path backupFilePath = backupLocation.resolve(relativePath);
 
