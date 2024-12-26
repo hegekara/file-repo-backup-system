@@ -44,6 +44,21 @@ const Header = ({ isLoggedIn }) => {
     }
   };
 
+
+  const RequestPasswordChange= async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await API.post(`/user/${id}/request-password-change`);
+      console.log('Password change request sent:', response.data);
+      alert('Password change request sent');
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to sent request');
+    }
+  };
+
   const logOut = () => {
     localStorage.clear();
     navigate("/home");
@@ -112,7 +127,7 @@ const Header = ({ isLoggedIn }) => {
               {isDropdownOpen && (
                 <div className="dropdown-menu">
                   <Link to="/profile" className="dropdown-item">Profil</Link>
-                  <Link to="/password-settings" className="dropdown-item">Change Password</Link>
+                  <button onClick={RequestPasswordChange} className="dropdown-item">Request Change Password</button>
                   {(role === "role_user") && (
                     <Link to="/my-teams" className="dropdown-item">My Teams</Link>
                   )}

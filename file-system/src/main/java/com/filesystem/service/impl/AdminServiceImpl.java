@@ -96,7 +96,6 @@ public class AdminServiceImpl implements IAdminService{
             if (requestOptional.isPresent()) {
                 PasswordChangeRequest request = requestOptional.get();
                 User user = request.getUser();
-                user.setPassword(request.getNewPassword());
 
                 userRepository.save(user);
                 passwordChangeRequestRepository.delete(request);

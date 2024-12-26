@@ -45,8 +45,8 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     @PostMapping("/{id}/request-password-change")
-    public ResponseEntity<Void> requestPasswordChange(@PathVariable Long id, @RequestBody String newPassword) {
-        return userService.requestPasswordChange(id, newPassword);
+    public ResponseEntity<Void> requestPasswordChange(@PathVariable Long id) {
+        return userService.requestPasswordChange(id);
     }
 
     @Override

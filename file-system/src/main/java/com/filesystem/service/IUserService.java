@@ -22,7 +22,5 @@ public interface IUserService {
 
     public ResponseEntity<User> updateUsername(Long id, String newUsername);
 
-    public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword);
-
-    public ResponseEntity<Void> approvePasswordChange(Long requestId);
+    public ResponseEntity<Void> requestPasswordChange(Long userId);
 }

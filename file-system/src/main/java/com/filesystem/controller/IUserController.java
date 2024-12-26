@@ -22,6 +22,6 @@ public interface IUserController {
 
     public ResponseEntity<User> updateUsername(Long id, String newUsername);
 
-    public ResponseEntity<Void> requestPasswordChange(Long userId, String newPassword);
+    public ResponseEntity<Void> requestPasswordChange(Long userId);
 
 }
