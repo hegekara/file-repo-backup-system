@@ -173,6 +173,42 @@ public class FileServiceImpl implements IFileService {
                                  .body("Error opening file");
         }
     }
+
+    @Override
+    public ResponseEntity<String> shareFile(String entityType, Long id, String fileName, Long teamId) {
+        try {
+            Path sourceDirectory = resolveEntityDirectory(id, entityType);
+            Path targetDirectory = resolveEntityDirectory(teamId, "teams");
+
+            if (sourceDirectory == null || !Files.exists(sourceDirectory) || !Files.isDirectory(sourceDirectory)) {
+                System.out.println("The specified directory does not exist or is invalid: " + sourceDirectory);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .body("Source directory not found");
+            }
+
+            if (targetDirectory == null || !Files.exists(targetDirectory) || !Files.isDirectory(targetDirectory)) {
+                System.out.println("The target directory does not exist or is invalid: " + targetDirectory);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .body("Target directory not found");
+            }
+
+            Path sourceFilePath = sourceDirectory.resolve(fileName);
+            Path targetFilePath = targetDirectory.resolve(fileName);
+
+            // Dosyayı kopyala
+            Files.copy(sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return ResponseEntity.ok("File shared successfully: " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error copying file: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error sharing file");
+        }
+    }
     
 
     private Path resolveEntityDirectory(Long id, String entityType) {

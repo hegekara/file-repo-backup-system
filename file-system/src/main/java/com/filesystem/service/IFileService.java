@@ -17,4 +17,6 @@ public interface IFileService {
     public ResponseEntity<List<String>> listFiles(String entityType, Long id);
 
     public ResponseEntity<String> openFile( String entityType, Long id, String fileName);
+
+    public ResponseEntity<String> shareFile(String entityType, Long id, String fileName, Long teamId);
 }
