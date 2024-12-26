@@ -17,8 +17,6 @@ public interface IUserService {
     public ResponseEntity<List<User>> getAllUsers();
 
     public ResponseEntity<User> updateUser(Long id, User user);
-    
-    public ResponseEntity<Void> deleteUser(Long id);
 
     public ResponseEntity<Response> login(LoginRequest loginRequest);
 

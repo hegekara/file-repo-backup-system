@@ -206,8 +206,6 @@ public class UserServiceImpl implements IUserService {
                 existingUser.setUsername(user.getUsername());
                 existingUser.setFirstName(user.getFirstName());
                 existingUser.setLastName(user.getLastName());
-                existingUser.setRole(user.getRole());
-                existingUser.setPassword(user.getPassword());
 
                 User updatedUser = userRepository.save(existingUser);
 
@@ -219,24 +217,6 @@ public class UserServiceImpl implements IUserService {
             }
         } catch (Exception e) {
             logger.error("Error occurred while updating user: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteUser(Long id) {
-        logger.info("User deletion process started. User ID: {}", id);
-        try {
-            if (userRepository.existsById(id)) {
-                userRepository.deleteById(id);
-                logger.info("User successfully deleted. User ID: {}", id);
-                return ResponseEntity.ok().build();
-            } else {
-                logger.error("User not found: {}", id);
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            logger.error("Error occurred while deleting user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }

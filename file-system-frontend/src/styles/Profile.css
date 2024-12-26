@@ -1,0 +1,81 @@
+.profile-container {
+    max-width: 600px;
+    margin: 10rem auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group input:disabled {
+    background-color: #e9e9e9;
+    color: #999;
+}
+
+.update-profile-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.delete-profile-button{
+    background-color: #f44336;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.update-profile-button:hover {
+    background-color: #3b873d;
+    transform: scale(0.98);
+}
+
+.delete-profile-button:hover {
+    transform: scale(0.98);
+    background-color: #a02e25;
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .update-profile-button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

@@ -12,6 +12,7 @@ import AdminPanel from "./admin-panel/AdminPanel";
 import Repo from "./pages/Repo";
 import MyTeams from "./pages/MyTeams";
 import TeamRepo from "./pages/TeamRepo";
+import Profile from "./pages/Profile";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/my-repo" element={<Repo />} />
         <Route path="/my-teams" element={<MyTeams />} />
         <Route path="/team-repo/:teamId" element={<TeamRepo />} />
