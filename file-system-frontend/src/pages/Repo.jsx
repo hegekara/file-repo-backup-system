@@ -10,6 +10,7 @@ function Repo() {
   const [id, setId] = useState(localStorage.getItem("id") || "");
   const [fileList, setFileList] = useState([]);
   const [error, setError] = useState("");
+  const [teams, setTeams] = useState([]);
 
   const handleGetRepo = async () => {
     if (!entityType || !id) {
@@ -102,10 +103,35 @@ function Repo() {
     }
   }
 
+  const handleShare = async(fileName) => {
+    try {
+        const response = await API.post(`/files/share/${entityType}/${id}/${fileName}/to/${teamId}`);
+        console.log(response);
+        
+    } catch (error) {
+        console.log(error);
+        setError("File could not be shared");
+    }
+  }
+
+  const handleGetUserTeams = async(e) => {
+    try {
+        const response = await API.get(`/team/user/${id}`);
+        setTeams(response.data);
+        
+    } catch (error) {
+        console.log(error);
+        setError("File could not be shared");
+    }
+  }
+
+
+
   useEffect(() => {
     if (localStorage.getItem("jwtToken")) {
       setIsLoggedIn(true);
       handleGetRepo();
+      handleGetUserTeams();
     }
   }, []);
 
@@ -130,7 +156,8 @@ function Repo() {
             <FileList files={fileList} 
                 onDownload={handleDownload}
                 onDelete={handleDelete}
-                onOpen={handleOpen}/>
+                onOpen={handleOpen}
+                onShare={handleShare}/>
           </>
         ) : (
           <p>Please log in to view files.</p>

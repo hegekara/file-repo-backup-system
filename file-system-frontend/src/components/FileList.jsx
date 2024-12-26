@@ -1,6 +1,6 @@
 import '../styles/FileList.css';
 
-const FileList = ({ files, onOpen, onDownload, onDelete }) => {
+const FileList = ({ files, onShare, onOpen, onDownload, onDelete, entityType }) => {
     return (
       <div className="file-list-container">
         <ul className="file-list">
@@ -15,6 +15,17 @@ const FileList = ({ files, onOpen, onDownload, onDelete }) => {
                     onClick={() => onOpen(file)}
                   >Open</button>
 
+                  <div>
+                    {entityType != "teams" && (
+                      <div>
+                        <button
+                        className="file-share-button" 
+                        onClick={() => onShare(file)}
+                      >Share</button>
+                      </div>
+                    )}
+                  </div>
+                  
                   <button 
                     className="file-download-button" 
                     onClick={() => onDownload(file)}

@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +98,13 @@ public class TeamServiceImpl implements ITeamService {
     public ResponseEntity<List<Team>> getTeamsByUser(Long userId) {
         logger.info("Fetching teams for user ID: {}", userId);
 
-        List<Team> teams = teamRepository.findByMemberId(userId);
+        List<Team> teams = Stream.concat(
+            teamRepository.findByMemberId(userId).stream(),
+            teamRepository.findByManagerId(userId).stream()
+            )
+            .distinct() 
+            .collect(Collectors.toList());
+
         if (teams.isEmpty()) {
             logger.warn("No teams found for user ID: {}", userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

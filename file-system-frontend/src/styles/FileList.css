@@ -38,7 +38,8 @@
 
 .file-download-button,
 .file-delete-button,
-.file-open-button {
+.file-open-button,
+.file-share-button {
   padding: 5px 10px;
   font-size: 0.9rem;
   color: #fff;
@@ -69,4 +70,12 @@
 
 .file-open-button:hover {
   background-color: #868476;
+}
+
+.file-share-button {
+  background-color: #58c3d6;
+}
+
+.file-share-button:hover {
+  background-color: #479eae;
 }

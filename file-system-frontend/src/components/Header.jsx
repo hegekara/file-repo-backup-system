@@ -114,7 +114,7 @@ const Header = ({ isLoggedIn }) => {
                   <Link to="/profile" className="dropdown-item">Profil</Link>
                   <Link to="/password-settings" className="dropdown-item">Change Password</Link>
                   {(role === "role_user") && (
-                    <Link to="/list-booking" className="dropdown-item">My Teams</Link>
+                    <Link to="/my-teams" className="dropdown-item">My Teams</Link>
                   )}
                   <button onClick={logOut} className="dropdown-item">Log Out</button>
                 </div>

@@ -59,6 +59,10 @@
     color: #333;
     border-bottom: 1px solid #eee;
     background-color: #eee;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+
   }
   
   .dropdown-item:last-child {
