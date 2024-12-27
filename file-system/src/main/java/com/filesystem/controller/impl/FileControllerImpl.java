@@ -78,7 +78,6 @@ public class FileControllerImpl implements IFileController {
         @PathVariable Long id,
         @PathVariable String fileName
     ){
-        System.out.println("open isteği geldi");
         return fileService.openFile(entityType, id, fileName);
     }
 
@@ -105,5 +104,10 @@ public class FileControllerImpl implements IFileController {
     
         return fileService.getRepo(path);
     }
-    
+
+    @Override
+    @GetMapping("/download-logs")
+    public ResponseEntity<Resource> downloadLogs() {
+        return fileService.downloadLogs();
+    }
 }

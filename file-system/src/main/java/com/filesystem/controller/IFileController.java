@@ -21,4 +21,6 @@ public interface IFileController {
     public ResponseEntity<String> shareFile(String entityType, Long id, String fileName, Long teamId);
 
     public ResponseEntity<List<String>> getRepo(String path);
+
+    public ResponseEntity<Resource> downloadLogs();
 }
