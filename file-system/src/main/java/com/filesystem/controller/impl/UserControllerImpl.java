@@ -5,15 +5,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.filesystem.controller.IUserController;
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.User;
 import com.filesystem.service.IUserService;
@@ -66,6 +69,22 @@ public class UserControllerImpl implements IUserController {
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         System.out.println("\n\nGüncelleme isteği geldi");
         return userService.updateUser(id, user);
+    }
+
+
+    @Override
+    @GetMapping("/check-password-status/{id}")
+    public ResponseEntity<PasswordChangeRequest> checkPasswordStatus(@PathVariable Long id){
+        System.out.println("istek geldi");
+        return userService.checkPasswordStatus(id);
+    }
+
+    @Override
+    @PatchMapping("/change-password/{id}")
+    public ResponseEntity<Void> changePassword(@PathVariable Long id,
+            @RequestParam(required = true) String oldPassword,
+            @RequestParam(required = true) String newPassword) {
+        return userService.changePassword(id, oldPassword, newPassword);
     }
 }
 

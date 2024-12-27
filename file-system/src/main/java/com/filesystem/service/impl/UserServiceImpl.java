@@ -125,6 +125,10 @@ public class UserServiceImpl implements IUserService {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
                 logger.info("Password change request process started. Username: {}", user.get().getUsername());
+                Optional<PasswordChangeRequest> reqCheck = passwordChangeRequestRepository.findByUserId(userId);
+                if(reqCheck.isPresent()){
+                    return ResponseEntity.badRequest().build();
+                }
                 PasswordChangeRequest request = new PasswordChangeRequest();
                 request.setUser(user.get());
                 request.setStatus(PasswordStatus.WAITING);
@@ -195,6 +199,49 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             logger.error("Error occurred while updating user: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<PasswordChangeRequest> checkPasswordStatus(Long userId) {
+        try {
+            Optional<PasswordChangeRequest> passwordRequest = passwordChangeRequestRepository.findByUserId(userId);
+
+            if (passwordRequest.isPresent()) {
+                return ResponseEntity.ok(passwordRequest.get());
+            }
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(null);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> changePassword(Long id, String oldPassword, String newPassword) {
+        Optional<User> optional = userRepository.findById(id);
+    
+        if (optional.isPresent()) {
+
+            User user = optional.get();
+    
+            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                Optional<PasswordChangeRequest> request = passwordChangeRequestRepository.findByUserId(id);
+                if(request.isPresent()){
+                    passwordChangeRequestRepository.delete(request.get());
+                }
+    
+                return ResponseEntity.ok().build();
+            } else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

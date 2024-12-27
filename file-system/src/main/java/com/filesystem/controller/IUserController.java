@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.User;
 
@@ -24,4 +25,7 @@ public interface IUserController {
 
     public ResponseEntity<Void> requestPasswordChange(Long userId);
 
+    public ResponseEntity<PasswordChangeRequest> checkPasswordStatus(Long id);
+
+    public ResponseEntity<Void> changePassword(Long id, String oldPassword, String newPassword);
 }
