@@ -17,6 +17,7 @@ import ManageUser from "./admin-panel/ManageUser";
 import UserDetails from "./admin-panel/UserDetails";
 import ManageTeam from "./admin-panel/ManageTeam";
 import TeamDetails from "./admin-panel/TeamDetails";
+import ManagePassword from "./admin-panel/ManagePassword";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/user-details/:userId" element={<UserDetails />} />
         <Route path="/manage-team" element={<ManageTeam />} />
         <Route path="/team-details/:teamId" element={<TeamDetails />} />
+        <Route path="/manage-password" element={<ManagePassword />} />
         
 
         <Route path="/*" element={<NoPage/>}/>

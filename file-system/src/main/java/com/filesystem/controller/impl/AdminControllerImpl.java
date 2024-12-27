@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.filesystem.controller.IAdminController;
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.Admin;
 import com.filesystem.service.IAdminService;
+
 
 @RestController
 @RequestMapping("rest/api/admin")
@@ -39,9 +41,15 @@ public class AdminControllerImpl implements IAdminController{
     }
 
     @Override
-    @PostMapping("/approve-password-change/{requestId}")
+    @PostMapping("/password/approve/{requestId}")
     public ResponseEntity<Void> approvePasswordChange(@PathVariable Long requestId) {
         return adminService.approvePasswordChange(requestId);
+    }
+
+    @Override
+    @PostMapping("/password/reject/{requestId}")
+    public ResponseEntity<Void> rejectPasswordChange(@PathVariable Long requestId) {
+        return adminService.rejectPasswordChange(requestId);
     }
 
     @Override
@@ -66,5 +74,11 @@ public class AdminControllerImpl implements IAdminController{
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
         return adminService.deleteAdmin(id);
+    }
+
+    @Override
+    @GetMapping("/get-password-requests")
+    public ResponseEntity<List<PasswordChangeRequest>> getPasswordRequests() {
+        return adminService.getPasswordRequests();
     }
 }

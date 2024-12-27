@@ -33,8 +33,7 @@ const AdminPanel = () => {
             <p className="desc">Users and files can be managed from the admin panel</p>
             <Link to="/manage-user" className="home-button">Manage Users</Link>
             <Link to="/manage-team" className="home-button">Manage Teams</Link>
-            <Link to="/password-requests" className="home-button">Manage Passwords</Link>
-            {/* <Link to="/log-list" className="home-button">Manage Logs</Link> */}
+            <Link to="/manage-password" className="home-button">Manage Passwords</Link>
           </div>
         )}
       </div>

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.Admin;
 
@@ -23,4 +24,8 @@ public interface IAdminService {
     public ResponseEntity<Void> deleteAdmin(Long id);
 
     public ResponseEntity<Void> approvePasswordChange(Long requestId);
+
+    public ResponseEntity<Void> rejectPasswordChange(Long requestId);
+
+    public ResponseEntity<List<PasswordChangeRequest>> getPasswordRequests();
 }
