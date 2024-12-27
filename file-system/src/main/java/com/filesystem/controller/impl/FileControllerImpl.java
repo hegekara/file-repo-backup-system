@@ -93,6 +93,17 @@ public class FileControllerImpl implements IFileController {
         return fileService.shareFile(entityType, id, fileName, teamId);
     }
     
+    @Override
+    @GetMapping("/getRepo")
+    public ResponseEntity<List<String>> getRepo(
+        @RequestParam String path) {
     
+        if (path.equals(null)) {
+            System.out.println("invalid parameters");
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+    
+        return fileService.getRepo(path);
+    }
     
 }

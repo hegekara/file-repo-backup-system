@@ -234,4 +234,29 @@ public class FileServiceImpl implements IFileService {
         }
         return null;
     }
+
+    @Override
+    public ResponseEntity<List<String>> getRepo(String path) {
+        try {
+
+            Path directory = Paths.get(path);
+
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                logger.warn("Directory not found for {}", path);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                    .body(Collections.emptyList()); // Klasör bulunamadı
+            }
+
+            List<String> fileNames = Files.list(directory)
+                                        .filter(Files::isRegularFile)
+                                        .map(a -> a.getFileName().toString())
+                                        .collect(Collectors.toList());
+
+            return ResponseEntity.ok(fileNames);
+        } catch (IOException e) {
+            logger.error("Error listing files for {}", path, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Collections.emptyList());
+        }
+    }
 }

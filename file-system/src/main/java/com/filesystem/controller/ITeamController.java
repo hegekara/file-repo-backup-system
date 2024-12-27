@@ -13,6 +13,8 @@ public interface ITeamController {
 
     public ResponseEntity<List<Team>> getAllTeams();
 
+    public ResponseEntity<Team> getTeamById(Long teamId);
+
     public ResponseEntity<List<Team>> getTeamsByUser(Long userId);
 
     public ResponseEntity<Void> deleteTeam(Long teamId);

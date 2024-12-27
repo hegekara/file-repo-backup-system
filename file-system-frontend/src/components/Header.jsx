@@ -83,41 +83,43 @@ const Header = ({ isLoggedIn }) => {
 
         <div>
           <div className="header-right">
-            <div className="create-team">
-            <RiTeamFill
-                  className="team-icon"
-                  onClick={teamDropdown}
-                  size={32}
-                />
-                {isTeamToggleOpen && (
-                  <div>
-                    <div className="team-dropdown-menu">
-                      <h3 className="team-title">Create Team</h3>
-                      <form onSubmit={handleCreateTeam}>
-                        <input
-                          className="team-dropdown-item"
-                          type="text"
-                          placeholder="Team Name"
-                          value={teamName}
-                          onChange={(e) => setTeamName(e.target.value)}
-                          required
-                        />
-                        <input
-                          className="team-dropdown-item"
-                          type="text"
-                          placeholder="Username"
-                          value={memeberName}
-                          onChange={(e) => setMemberName(e.target.value)}
-                          required
-                        />
-                        <button type="submit" className="create-team-button">Create Team</button>
-                      </form>
+            {(role === "role_user") &&(
+              <div className="create-team">
+              <RiTeamFill
+                    className="team-icon"
+                    onClick={teamDropdown}
+                    size={32}
+                  />
+                  {isTeamToggleOpen &&(
+                    <div>
+                      <div className="team-dropdown-menu">
+                        <h3 className="team-title">Create Team</h3>
+                        <form onSubmit={handleCreateTeam}>
+                          <input
+                            className="team-dropdown-item"
+                            type="text"
+                            placeholder="Team Name"
+                            value={teamName}
+                            onChange={(e) => setTeamName(e.target.value)}
+                            required
+                          />
+                          <input
+                            className="team-dropdown-item"
+                            type="text"
+                            placeholder="Username"
+                            value={memeberName}
+                            onChange={(e) => setMemberName(e.target.value)}
+                            required
+                          />
+                          <button type="submit" className="create-team-button">Create Team</button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                )}
-            </div>
-            
-          
+                  )}
+              </div>
+            )}
+
+
             <div className="user-menu">
               <FaUserCircle
                 className="user-icon"
@@ -126,10 +128,14 @@ const Header = ({ isLoggedIn }) => {
               />
               {isDropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/profile" className="dropdown-item">Profil</Link>
-                  <button onClick={RequestPasswordChange} className="dropdown-item">Request Change Password</button>
+
                   {(role === "role_user") && (
-                    <Link to="/my-teams" className="dropdown-item">My Teams</Link>
+                    <div>
+                      <Link to="/profile" className="dropdown-item">Profil</Link>
+                      <button onClick={RequestPasswordChange} className="dropdown-item">Request Change Password</button>
+                      <Link to="/my-teams" className="dropdown-item">My Teams</Link>
+                    </div>
+
                   )}
                   <button onClick={logOut} className="dropdown-item">Log Out</button>
                 </div>

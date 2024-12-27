@@ -1,0 +1,35 @@
+.user-list-container {
+    margin-top: 20px;
+  }
+  
+  .user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    transition: background-color 0.3s ease;
+  }
+  
+  .user-list-item:hover {
+    background-color: #ecf0f1;
+  }
+  
+  .user-name {
+    flex-grow: 1;
+    font-size: 1rem;
+    color: #2c3e50;
+    word-break: break-word;
+  }
+  .action-button{
+    margin: 5px;
+  }

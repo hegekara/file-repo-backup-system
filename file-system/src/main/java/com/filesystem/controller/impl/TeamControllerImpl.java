@@ -26,9 +26,15 @@ public class TeamControllerImpl implements ITeamController {
     }
 
     @Override
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<Team>> getAllTeams() {
         return teamService.getAllTeams();
+    }
+
+    @Override
+    @GetMapping("/{teamId}")
+    public ResponseEntity<Team> getTeamById(@PathVariable Long teamId) {
+        return teamService.getTeamById(teamId);
     }
 
     @Override
