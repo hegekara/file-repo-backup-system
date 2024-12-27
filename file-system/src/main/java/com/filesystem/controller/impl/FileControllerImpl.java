@@ -78,7 +78,6 @@ public class FileControllerImpl implements IFileController {
         @PathVariable Long id,
         @PathVariable String fileName
     ){
-        System.out.println("open isteği geldi");
         return fileService.openFile(entityType, id, fileName);
     }
 
@@ -93,6 +92,22 @@ public class FileControllerImpl implements IFileController {
         return fileService.shareFile(entityType, id, fileName, teamId);
     }
     
+    @Override
+    @GetMapping("/getRepo")
+    public ResponseEntity<List<String>> getRepo(
+        @RequestParam String path) {
     
+        if (path.equals(null)) {
+            System.out.println("invalid parameters");
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
     
+        return fileService.getRepo(path);
+    }
+
+    @Override
+    @GetMapping("/download-logs")
+    public ResponseEntity<Resource> downloadLogs() {
+        return fileService.downloadLogs();
+    }
 }

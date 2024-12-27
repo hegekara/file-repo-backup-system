@@ -56,7 +56,7 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<User>> getAllUsers() {
         return userService.getAllUsers();
     }

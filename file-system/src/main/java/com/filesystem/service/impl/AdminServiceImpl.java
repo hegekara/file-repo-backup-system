@@ -11,14 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.filesystem.constants.PasswordStatus;
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.Admin;
-import com.filesystem.entities.user.User;
 import com.filesystem.repositories.IAdminRepository;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
-import com.filesystem.repositories.IUserRepository;
 import com.filesystem.security.JwtUtil;
 import com.filesystem.service.IAdminService;
 
@@ -28,9 +27,6 @@ public class AdminServiceImpl implements IAdminService{
 
     @Autowired
     private IAdminRepository adminRepository;
-
-    @Autowired
-    private IUserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -84,30 +80,6 @@ public class AdminServiceImpl implements IAdminService{
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             logger.error("Error occurred during login: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<Void> approvePasswordChange(Long requestId) {
-        logger.info("Password change approval process started. Request ID: {}", requestId);
-        try {
-            Optional<PasswordChangeRequest> requestOptional = passwordChangeRequestRepository.findById(requestId);
-            if (requestOptional.isPresent()) {
-                PasswordChangeRequest request = requestOptional.get();
-                User user = request.getUser();
-
-                userRepository.save(user);
-                passwordChangeRequestRepository.delete(request);
-
-                logger.info("Password change approved. User ID: {}", user.getId());
-                return ResponseEntity.ok().build();
-            } else {
-                logger.error("Password change request not found: {}", requestId);
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            logger.error("Error occurred while approving password change: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -184,6 +156,65 @@ public class AdminServiceImpl implements IAdminService{
             }
         } catch (Exception e) {
             logger.error("Error occurred while deleting admin: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<List<PasswordChangeRequest>> getPasswordRequests() {
+        List<PasswordChangeRequest> waitingRequests = passwordChangeRequestRepository.findByStatus(PasswordStatus.WAITING);
+    
+        if (waitingRequests != null && !waitingRequests.isEmpty()) {
+            return ResponseEntity.ok().body(waitingRequests);
+        }
+    
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> approvePasswordChange(Long requestId) {
+        logger.info("Password change approval process started. Request ID: {}", requestId);
+        try {
+            Optional<PasswordChangeRequest> requestOptional = passwordChangeRequestRepository.findById(requestId);
+            if (requestOptional.isPresent()) {
+                PasswordChangeRequest request = requestOptional.get();
+
+                request.setStatus(PasswordStatus.ACCEPTED);
+                passwordChangeRequestRepository.save(request);
+
+                logger.info("Password change approved. User: {}", request.getUser().getUsername());
+                return ResponseEntity.ok().build();
+            } else {
+                logger.error("Password change request not found: {}", requestId);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while approving password change: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<Void> rejectPasswordChange(Long requestId) {
+        logger.info("Password change reject process started. Request ID: {}", requestId);
+        try {
+            Optional<PasswordChangeRequest> requestOptional = passwordChangeRequestRepository.findById(requestId);
+            if (requestOptional.isPresent()) {
+                PasswordChangeRequest request = requestOptional.get();
+
+                request.setStatus(PasswordStatus.REJECTED);
+                passwordChangeRequestRepository.save(request);
+
+                logger.info("Password change rejected. User: {}", request.getUser().getUsername());
+                return ResponseEntity.ok().build();
+            } else {
+                logger.error("Password change request not found: {}", requestId);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while rejecting password change: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }

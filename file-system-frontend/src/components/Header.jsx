@@ -12,6 +12,7 @@ const Header = ({ isLoggedIn }) => {
   const [id, setId] = useState(localStorage.getItem("id") || "");
   const [teamName, setTeamName] = useState("");
   const [memeberName, setMemberName] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const toggleDropdown = () => {
@@ -59,6 +60,30 @@ const Header = ({ isLoggedIn }) => {
     }
   };
 
+
+  const handleDownloadLogs = async (event) => {
+    event.preventDefault();
+
+    try {
+        const response = await API.get(`/files/download-logs`, {
+            responseType: 'blob', // Ensure the response is treated as binary data (Blob)
+        });
+
+        const fileName = "logs.zip"; // Set the name of the downloaded file
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove(); // Cleanup
+    } catch (err) {
+        console.error("Error downloading file:", err);
+        alert("Failed to download logs. Please try again."); // User-friendly feedback
+    }
+};
+
+
   const logOut = () => {
     localStorage.clear();
     navigate("/home");
@@ -83,41 +108,43 @@ const Header = ({ isLoggedIn }) => {
 
         <div>
           <div className="header-right">
-            <div className="create-team">
-            <RiTeamFill
-                  className="team-icon"
-                  onClick={teamDropdown}
-                  size={32}
-                />
-                {isTeamToggleOpen && (
-                  <div>
-                    <div className="team-dropdown-menu">
-                      <h3 className="team-title">Create Team</h3>
-                      <form onSubmit={handleCreateTeam}>
-                        <input
-                          className="team-dropdown-item"
-                          type="text"
-                          placeholder="Team Name"
-                          value={teamName}
-                          onChange={(e) => setTeamName(e.target.value)}
-                          required
-                        />
-                        <input
-                          className="team-dropdown-item"
-                          type="text"
-                          placeholder="Username"
-                          value={memeberName}
-                          onChange={(e) => setMemberName(e.target.value)}
-                          required
-                        />
-                        <button type="submit" className="create-team-button">Create Team</button>
-                      </form>
+            {(role === "role_user") &&(
+              <div className="create-team">
+              <RiTeamFill
+                    className="team-icon"
+                    onClick={teamDropdown}
+                    size={32}
+                  />
+                  {isTeamToggleOpen &&(
+                    <div>
+                      <div className="team-dropdown-menu">
+                        <h3 className="team-title">Create Team</h3>
+                        <form onSubmit={handleCreateTeam}>
+                          <input
+                            className="team-dropdown-item"
+                            type="text"
+                            placeholder="Team Name"
+                            value={teamName}
+                            onChange={(e) => setTeamName(e.target.value)}
+                            required
+                          />
+                          <input
+                            className="team-dropdown-item"
+                            type="text"
+                            placeholder="Username"
+                            value={memeberName}
+                            onChange={(e) => setMemberName(e.target.value)}
+                            required
+                          />
+                          <button type="submit" className="create-team-button">Create Team</button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                )}
-            </div>
-            
-          
+                  )}
+              </div>
+            )}
+
+
             <div className="user-menu">
               <FaUserCircle
                 className="user-icon"
@@ -126,11 +153,22 @@ const Header = ({ isLoggedIn }) => {
               />
               {isDropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/profile" className="dropdown-item">Profil</Link>
-                  <button onClick={RequestPasswordChange} className="dropdown-item">Request Change Password</button>
+
                   {(role === "role_user") && (
-                    <Link to="/my-teams" className="dropdown-item">My Teams</Link>
+                    <div>
+                      <Link to="/profile" className="dropdown-item">Profil</Link>
+                      <button onClick={RequestPasswordChange} className="dropdown-item">Request Change Password</button>
+                      <Link to="/my-teams" className="dropdown-item">My Teams</Link>
+                    </div>
+
                   )}
+
+                  {(role === "role_admin") && (
+                    <div>
+                      <button onClick={handleDownloadLogs} className="dropdown-item">Download Logs</button>
+                    </div>
+                  )}
+
                   <button onClick={logOut} className="dropdown-item">Log Out</button>
                 </div>
               )}

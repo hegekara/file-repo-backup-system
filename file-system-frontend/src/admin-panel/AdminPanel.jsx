@@ -28,16 +28,12 @@ const AdminPanel = () => {
             <Link to="/personel-login" className="home-button">Personel Login</Link>
           </div>
         )}
-        {isLoggedIn && (role === "admin") && (
+        {isLoggedIn && (role === "role_admin") && (
           <div>
-            <p className="desc">Users and bookings can be managed from the admin panel</p>
-            <Link to="/admin-list-room" className="home-button">Manage Room</Link>
-            <Link to="/admin-list-booking" className="home-button">Manage Booking</Link>
-            {(role === "admin") && (
-              <>
-                <Link to="/list-personel" className="home-button">Manage Personel</Link>
-              </>
-            )}
+            <p className="desc">Users and files can be managed from the admin panel</p>
+            <Link to="/manage-user" className="home-button">Manage Users</Link>
+            <Link to="/manage-team" className="home-button">Manage Teams</Link>
+            <Link to="/manage-password" className="home-button">Manage Passwords</Link>
           </div>
         )}
       </div>

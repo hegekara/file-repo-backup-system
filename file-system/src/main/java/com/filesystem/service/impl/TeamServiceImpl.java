@@ -95,6 +95,20 @@ public class TeamServiceImpl implements ITeamService {
     }
 
     @Override
+    public ResponseEntity<Team> getTeamById(Long teamId) {
+        logger.info("Fetching team {}.", teamId);
+
+        Optional<Team> team = teamRepository.findById(teamId);
+        if (team.isEmpty()) {
+            logger.warn("No teams found.");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        logger.info("Successfully fetched {} teams.", team.get().getName());
+        return ResponseEntity.ok().body(team.get());
+    }
+
+    @Override
     public ResponseEntity<List<Team>> getTeamsByUser(Long userId) {
         logger.info("Fetching teams for user ID: {}", userId);
 

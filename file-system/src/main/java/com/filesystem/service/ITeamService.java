@@ -17,4 +17,6 @@ public interface ITeamService {
 
     public ResponseEntity<Void> deleteTeam(Long teamId);
 
+    public ResponseEntity<Team> getTeamById(Long teamId);
+
 }

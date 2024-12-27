@@ -2,6 +2,8 @@ package com.filesystem.service.impl;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,4 +238,97 @@ public class FileServiceImpl implements IFileService {
         }
         return null;
     }
+
+    @Override
+    public ResponseEntity<List<String>> getRepo(String path) {
+        try {
+
+            Path directory = Paths.get(path);
+
+            if (!Files.exists(directory) || !Files.isDirectory(directory)) {
+                logger.warn("Directory not found for {}", path);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                    .body(Collections.emptyList()); // Klasör bulunamadı
+            }
+
+            List<String> fileNames = Files.list(directory)
+                                        .filter(Files::isRegularFile)
+                                        .map(a -> a.getFileName().toString())
+                                        .collect(Collectors.toList());
+
+            return ResponseEntity.ok(fileNames);
+        } catch (IOException e) {
+            logger.error("Error listing files for {}", path, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Collections.emptyList());
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<Resource> downloadLogs(){
+    String logsDirectory = "logs";
+        Path zipFilePath = Paths.get("logs.zip");
+
+        try {
+            FileOutputStream fos = new FileOutputStream(zipFilePath.toFile());
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+            File fileToZip = new File(logsDirectory);
+            zipFile(fileToZip, fileToZip.getName(), zipOut);
+
+            Resource resource = new UrlResource(zipFilePath.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                logger.error("Created ZIP file exists but could not be read: {}", zipFilePath);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+
+            if (!fileToZip.exists() || !fileToZip.isDirectory()) {
+                logger.error("Logs directory does not exist or is not a directory: {}", logsDirectory);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                    .body(null);
+            }
+
+            logger.info("Logs directory zipped successfully: {}", zipFilePath);
+            return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"logs.zip\"")
+                            .body(resource);
+
+        } catch (IOException e) {
+            logger.error("Error occurred while zipping logs directory", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
+
+        if (fileToZip.isHidden()) {
+            return;
+        }
+        if (fileToZip.isDirectory()) {
+            if (fileName.endsWith("/")) {
+                zipOut.putNextEntry(new ZipEntry(fileName));
+                zipOut.closeEntry();
+            } else {
+                zipOut.putNextEntry(new ZipEntry(fileName + "/"));
+                zipOut.closeEntry();
+            }
+            File[] children = fileToZip.listFiles();
+            if (children != null) {
+                for (File childFile : children) {
+                    zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+                }
+            }
+            return;
+        }
+        try (FileInputStream fis = new FileInputStream(fileToZip)) {
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipOut.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zipOut.write(bytes, 0, length);
+            }
+        }
+    }   
 }
