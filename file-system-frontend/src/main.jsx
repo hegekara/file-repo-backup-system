@@ -18,6 +18,7 @@ import UserDetails from "./admin-panel/UserDetails";
 import ManageTeam from "./admin-panel/ManageTeam";
 import TeamDetails from "./admin-panel/TeamDetails";
 import ManagePassword from "./admin-panel/ManagePassword";
+import PasswordSettings from "./pages/PasswordSettings";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-repo" element={<Repo />} />
         <Route path="/my-teams" element={<MyTeams />} />
+        <Route path="/change-password" element={<PasswordSettings />} />
         <Route path="/team-repo/:teamId" element={<TeamRepo />} />
 
         <Route path="/admin-login" element={<AdminLogin />} />
