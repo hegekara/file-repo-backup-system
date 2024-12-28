@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,10 @@ import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.Admin;
+import com.filesystem.entities.user.User;
 import com.filesystem.repositories.IAdminRepository;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
+import com.filesystem.repositories.IUserRepository;
 import com.filesystem.security.JwtUtil;
 import com.filesystem.service.IAdminService;
 
@@ -27,6 +30,9 @@ public class AdminServiceImpl implements IAdminService{
 
     @Autowired
     private IAdminRepository adminRepository;
+
+    @Autowired
+    private IUserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -216,6 +222,21 @@ public class AdminServiceImpl implements IAdminService{
         } catch (Exception e) {
             logger.error("Error occurred while rejecting password change: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<String> updateStorageLimit(Long id, Double newLimit) {
+        Optional<User> optional = userRepository.findById(id);
+    
+        if (optional.isPresent()) {
+            User user = optional.get();
+            user.setStorageLimit(newLimit);
+            userRepository.save(user);
+            return ResponseEntity.ok("Storage limit updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
     }
 }

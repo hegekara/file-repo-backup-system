@@ -16,4 +16,7 @@ public class User extends BaseUser{
 
     @Column(nullable = false, unique = true)
     private String repoPath;
+
+    @Column(nullable = false)
+    private Double storageLimit;
 }

@@ -57,8 +57,12 @@ function Repo() {
       setError("");
       handleGetRepo();
     } catch (err) {
-      console.error("Error uploading file:", err);
-      setError("Failed to upload file. Please try again.");
+      if (err.response && err.response.status === 509){
+        setError(err.response.data || "Storage limit exceeded. File not uploaded.");
+      } else {
+        console.error("Error uploading file:", err);
+        setError("Failed to upload file. Please try again.");
+      }
     }
   };
 
