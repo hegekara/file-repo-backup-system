@@ -2,24 +2,16 @@ package com.filesystem.logProcess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.filesystem.entities.user.User;
-import com.filesystem.repositories.IUserRepository;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class UserLogFileMonitor {
-
-    @Autowired
-    private IUserRepository userRepository;
 
     private static final Logger anomalyLogger = LoggerFactory.getLogger("UserAnomalyLogger");
     private static final String LOG_FILE_PATH = "logs/application.log";
@@ -70,20 +62,14 @@ public class UserLogFileMonitor {
     }
 
     private void passwordChangeControl(String line) {
-        if (line.contains("Password change request")) {
-            String id = extractIdFromPasswordLog(line);
+        if (line.contains("Password change request process started")) {
+            String username = extractIdFromPasswordLog(line);
 
             try {
-                Optional<User> user = userRepository.findById(Long.parseLong(id));
-                if (user.isPresent()) {
-                    String username = user.get().getUsername();
-                    passwordRequestCounts.merge(username, 1, Integer::sum);
+                passwordRequestCounts.merge(username, 1, Integer::sum);
 
-                    if (passwordRequestCounts.get(username) >= 3) {
-                        anomalyLogger.warn("Anomaly detected: {} requested password change 3 times.", username);
-                    }
-                } else {
-                    anomalyLogger.warn("Anomaly detected: No user found with ID {} for password change request.", id);
+                if (passwordRequestCounts.get(username) >= 3) {
+                    anomalyLogger.warn("Anomaly detected: {} requested password change {} times.", username, passwordRequestCounts.get(username));
                 }
             } catch (NumberFormatException e) {
                 anomalyLogger.error("Error parsing user ID from log line: {}", e.getMessage());
@@ -102,7 +88,7 @@ public class UserLogFileMonitor {
     }
 
     private String extractIdFromPasswordLog(String logLine) {
-        int startIndex = logLine.indexOf("ID:") + 3;
+        int startIndex = logLine.indexOf("Username:") + 9;
         return logLine.substring(startIndex).trim();
     }
 }
