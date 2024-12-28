@@ -16,10 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.filesystem.constants.PasswordStatus;
+import com.filesystem.entities.AdminNotification;
 import com.filesystem.entities.LoginRequest;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
+import com.filesystem.entities.user.Admin;
 import com.filesystem.entities.user.User;
+import com.filesystem.repositories.IAdminNotificationRepository;
+import com.filesystem.repositories.IAdminRepository;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
 import com.filesystem.repositories.IUserRepository;
 import com.filesystem.security.JwtUtil;
@@ -30,6 +34,12 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IAdminRepository adminRepository;
+
+    @Autowired
+    private IAdminNotificationRepository adminNotificationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -86,6 +96,7 @@ public class UserServiceImpl implements IUserService {
                     return ResponseEntity.ok().body(new Response(user, token, "Login succsesful!"));
                 }
 
+                createAdminNotification(1L, "Failed login attempt: " + loginRequest.getUsername());
                 logger.warn("Failed login: {}", loginRequest.getUsername());
             } else {
                 logger.error("User not found: {}", loginRequest.getUsername());
@@ -108,6 +119,7 @@ public class UserServiceImpl implements IUserService {
                 user.setUsername(newUsername);
                 User updatedUser = userRepository.save(user);
 
+                createAdminNotification(1l, "Username updated: " + user.getUsername() + " -> " + newUsername);
                 logger.info("Username successfully updated. User ID: {}", id);
                 return ResponseEntity.ok(updatedUser);
             } else {
@@ -244,6 +256,17 @@ public class UserServiceImpl implements IUserService {
             }
         } else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+        private void createAdminNotification(Long userId, String message){
+        Optional<Admin> optional = adminRepository.findById(userId);
+    
+        if (optional.isPresent()) {
+            Admin admin = optional.get();
+
+            AdminNotification notification = new AdminNotification(admin, message);
+            adminNotificationRepository.save(notification);
         }
     }
 }

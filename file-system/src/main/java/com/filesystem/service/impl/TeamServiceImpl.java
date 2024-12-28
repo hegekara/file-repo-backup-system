@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.filesystem.entities.Notification;
 import com.filesystem.entities.Team;
 import com.filesystem.entities.TeamRequest;
 import com.filesystem.entities.user.User;
+import com.filesystem.repositories.INotificationRepository;
 import com.filesystem.repositories.ITeamRepository;
 import com.filesystem.repositories.IUserRepository;
 import com.filesystem.service.ITeamService;
@@ -30,6 +32,9 @@ public class TeamServiceImpl implements ITeamService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private INotificationRepository notificationRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
@@ -64,6 +69,8 @@ public class TeamServiceImpl implements ITeamService {
             newTeam.setMember(member);;
             newTeam.setRepoPath("repos/teams/" + team.getName()); // Takım repo yolu
             Team savedTeam = teamRepository.save(newTeam);
+
+            createNotification(member.getId(), (manager.get().getUsername()).toString()+" added you a team" );
 
             try {
                 Path repoDirectory = Paths.get(newTeam.getRepoPath());
@@ -141,5 +148,16 @@ public class TeamServiceImpl implements ITeamService {
         teamRepository.deleteById(teamId);
         logger.info("Team with ID {} successfully deleted.", teamId);
         return ResponseEntity.noContent().build();
+    }
+
+    private void createNotification(Long userId, String message){
+        Optional<User> optional = userRepository.findById(userId);
+    
+        if (optional.isPresent()) {
+            User user = optional.get();
+
+            Notification notification = new Notification(user, message);
+            notificationRepository.save(notification);
+        }
     }
 }
