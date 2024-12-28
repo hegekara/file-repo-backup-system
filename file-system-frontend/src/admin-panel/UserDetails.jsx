@@ -13,7 +13,7 @@ const UserDetails = () => {
     const [error, setError] = useState("");
     const [files, setFiles] = useState([]);
     const { user } = location.state || {};
-    const [storageLimit, setStorageLimit] = useState(user?.storageLimit || 50); // Varsayılan 50 MB
+    const [storageLimit, setStorageLimit] = useState(user?.storageLimit || 50);
 
     if (!user) {
         return <p>No user details available.</p>;

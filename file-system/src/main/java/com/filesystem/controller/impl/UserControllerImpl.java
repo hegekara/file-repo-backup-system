@@ -75,7 +75,6 @@ public class UserControllerImpl implements IUserController {
     @Override
     @GetMapping("/check-password-status/{id}")
     public ResponseEntity<PasswordChangeRequest> checkPasswordStatus(@PathVariable Long id){
-        System.out.println("istek geldi");
         return userService.checkPasswordStatus(id);
     }
 

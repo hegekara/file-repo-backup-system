@@ -4,6 +4,7 @@ import "../styles/Header.css";
 import { FaUserCircle } from "react-icons/fa";
 import { RiTeamFill } from "react-icons/ri";
 import API from '../api';
+import { PiBellRingingBold } from "react-icons/pi";
 
 const Header = ({ isLoggedIn }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -108,6 +109,11 @@ const Header = ({ isLoggedIn }) => {
 
         <div>
           <div className="header-right">
+          <PiBellRingingBold
+            className="team-icon"
+              size={32}
+              onClick={() => navigate("/notification")}
+            />
             {(role === "role_user") &&(
               <div className="create-team">
               <RiTeamFill

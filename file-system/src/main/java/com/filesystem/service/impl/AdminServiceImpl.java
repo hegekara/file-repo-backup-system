@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.filesystem.constants.PasswordStatus;
 import com.filesystem.entities.LoginRequest;
+import com.filesystem.entities.Notification;
 import com.filesystem.entities.PasswordChangeRequest;
 import com.filesystem.entities.Response;
 import com.filesystem.entities.user.Admin;
 import com.filesystem.entities.user.User;
 import com.filesystem.repositories.IAdminRepository;
+import com.filesystem.repositories.INotificationRepository;
 import com.filesystem.repositories.IPasswordChangeRequestRepository;
 import com.filesystem.repositories.IUserRepository;
 import com.filesystem.security.JwtUtil;
@@ -33,6 +35,9 @@ public class AdminServiceImpl implements IAdminService{
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private INotificationRepository notificationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -213,7 +218,11 @@ public class AdminServiceImpl implements IAdminService{
                 request.setStatus(PasswordStatus.REJECTED);
                 passwordChangeRequestRepository.save(request);
 
+                createNotification(request.getUser().getId(), "Password change request rejected");
+
                 logger.info("Password change rejected. User: {}", request.getUser().getUsername());
+
+                passwordChangeRequestRepository.delete(request);
                 return ResponseEntity.ok().build();
             } else {
                 logger.error("Password change request not found: {}", requestId);
@@ -237,6 +246,17 @@ public class AdminServiceImpl implements IAdminService{
             return ResponseEntity.ok("Storage limit updated successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
+    private void createNotification(Long userId, String message){
+        Optional<User> optional = userRepository.findById(userId);
+    
+        if (optional.isPresent()) {
+            User user = optional.get();
+
+            Notification notification = new Notification(user, message);
+            notificationRepository.save(notification);
         }
     }
 }
