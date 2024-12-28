@@ -28,4 +28,6 @@ public interface IAdminController {
     public ResponseEntity<Void> rejectPasswordChange(Long requestId);
 
     public ResponseEntity<List<PasswordChangeRequest>> getPasswordRequests();
+
+    public ResponseEntity<String> updateStorageLimit(Long userId, Double newLimit);
 }

@@ -53,6 +53,8 @@ public class UserServiceImpl implements IUserService {
             String repoPath = "repos/users/" + user.getUsername();
             user.setRepoPath(repoPath);
 
+            user.setStorageLimit(50.0);
+
             // Kullanıcıyı kaydet
             User savedUser = userRepository.save(user);
 

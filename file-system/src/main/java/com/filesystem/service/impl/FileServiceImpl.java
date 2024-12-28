@@ -46,22 +46,77 @@ public class FileServiceImpl implements IFileService {
     @Autowired
     private ITeamRepository teamRepository;
 
+
+
     @Override
     public ResponseEntity<String> uploadFile(String entityType, Long id, MultipartFile file) {
         try {
             System.out.println("upload service başladı");
+    
+            // Dosya boyutunu al
+            long fileSizeInBytes = file.getSize();
+            double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
+    
+            if ("users".equalsIgnoreCase(entityType)) {
+                Optional<User> optionalUser = userRepository.findById(id);
+                if (optionalUser.isPresent()) {
+                    User user = optionalUser.get();
+    
+                    // Kullanıcının mevcut depolama kullanımını hesapla
+                    double currentStorageUsage = calculateUserStorageUsage(user);
+                    System.out.println("\n\nmevcut alan: "+ currentStorageUsage);
+    
+                    if (currentStorageUsage + fileSizeInMB > user.getStorageLimit()) {
+                        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
+                                             .body("Upload failed: Storage limit exceeded. Current usage: " +
+                                                   currentStorageUsage + " MB, Limit: " + user.getStorageLimit() + " MB.");
+                    }
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                         .body("User not found with ID: " + id);
+                }
+            }
+    
+            // Dosyayı yükle
             Path directory = resolveEntityDirectory(id, entityType);
-
             Files.createDirectories(directory);
             Path filePath = directory.resolve(file.getOriginalFilename());
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+    
             logger.info("File uploaded successfully to: {}", filePath);
             return ResponseEntity.ok("File uploaded successfully: " + filePath.toString());
         } catch (IOException e) {
             logger.error("Error uploading file for entityType={} and id={}: {}", entityType, id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("Error uploading file: " + e.getMessage());
+        }
+    }
+
+
+    private double calculateUserStorageUsage(User user) {
+        Path userDirectory = Paths.get(user.getRepoPath());
+        if (!Files.exists(userDirectory)) {
+            System.out.println(("Dosya bulunamadı"));
+            return 0.0; // Kullanıcının henüz bir dosyası yok
+        }
+    
+        try {
+            // Kullanıcının depolama dizinindeki tüm dosyaların boyutunu hesapla
+            System.out.println("Dosya bulundu hesaplanıyor");
+            return Files.walk(userDirectory)
+                        .filter(Files::isRegularFile)
+                        .mapToLong(file -> {
+                            try {
+                                return Files.size(file);
+                            } catch (IOException e) {
+                                logger.error("Error calculating size for file: {}", file, e);
+                                return 0L;
+                            }
+                        })
+                        .sum() / (1024.0 * 1024.0); // Byte -> MB dönüşümü
+        } catch (IOException e) {
+            logger.error("Error calculating storage usage for user: {}", user.getUsername(), e);
+            return 0.0; // Hata durumunda 0 döner
         }
     }
 
